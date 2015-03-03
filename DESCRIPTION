@@ -1,10 +1,11 @@
 Package: ProjectPWS
 Title: STAT290 Class Project on Personal Weather Station Data, using RShiny.
 Version: 0.1
-Authors@R: mailtomaruthi@gmail.com jared.casale@gmail.com
-Description: What the package does (paragraph)
+Date: 2015-02-18
+Authors: mailtomaruthi@gmail.com jared.casale@gmail.com
+Maintainers: mailtomaruthi@gmail.com jared.casale@gmail.com
+Description: Personal Weather Station Data - Class Project
 Depends: R (>= 3.1.2)
-Imports: jsonlite
-Imports: shiny
-License: GPU-3
+Imports: XML, shiny, data.table
+License: MIT
 LazyData: true
