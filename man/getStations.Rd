@@ -10,13 +10,13 @@ getStations(zip, radius = 10)
 \item{Zip}{Code and the radius in miles}
 }
 \value{
-data frame containing weather stations data
+PWStations class with weather stations data
 }
 \description{
 This function accepts the zip code and a radius in miles and
-             returns all the weather stations in that range in a table.
+             returns all the stations in that range in the PWStations class.
 }
 \author{
-Maruthi Ram Nadakuduru
+Maruthi Ram Nadakuduru, Jared Casale
 }
 
