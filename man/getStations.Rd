@@ -4,19 +4,19 @@
 \alias{getStations}
 \title{Returns the Personal Weather Stations nearby input provided}
 \usage{
-getStations(zip, radius = 10)
+getStations(zip, radius = 10, state, country)
 }
 \arguments{
-\item{Zip}{Code and the radius in miles}
+\item{Zip}{Code and the radius in kilometers}
 }
 \value{
-data frame containing weather stations data
+PWStations class with weather stations data
 }
 \description{
-This function accepts the zip code and a radius in miles and
-             returns all the weather stations in that range in a table.
+This function accepts the zip code and a radius in km and
+             returns all the stations in that range in the PWStations class.
 }
 \author{
-Maruthi Ram Nadakuduru
+Maruthi Ram Nadakuduru, Jared Casale
 }
 
