@@ -4,7 +4,7 @@
 \alias{getStations}
 \title{Returns the Personal Weather Stations nearby input provided}
 \usage{
-getStations(zip, radius = 10, state, country)
+getStations(zip = NA, radius = 10, state = NA, country = NA)
 }
 \arguments{
 \item{Zip}{Code and the radius in kilometers}

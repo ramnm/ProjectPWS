@@ -8,7 +8,7 @@
 ## @examples
 ## \dontrun{plotQuakes("red")}
 ##
-getStations <- function(zip, radius=10, state, country){
+getStations <- function(zip = NA, radius = 10, state = NA, country = NA){
 ##
   print(paste(zip,radius,state,country))
   obj <- PWStations$new(

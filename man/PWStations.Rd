@@ -4,7 +4,7 @@
 \name{PWStations}
 \alias{PWStations}
 \title{Function defining the PWStations R6 class}
-\format{\preformatted{Class 'R6ClassGenerator' <environment: 0x000000000881b890> 
+\format{\preformatted{Class 'R6ClassGenerator' <environment: 0x0000000005db7420> 
  - attr(*, "name")= chr "PWStations_generator"
 }}
 \usage{
