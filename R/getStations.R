@@ -10,7 +10,6 @@
 ##
 getStations <- function(zip, radius=10, state, country){
 ##
-  print(paste(zip,radius,state,country))
   obj <- PWStations$new(
                         center = zip,
                         range = as.integer(radius),
@@ -24,7 +23,6 @@ getStations <- function(zip, radius=10, state, country){
 # Zip Code entered
 #
   if(!is.na(obj$center)) {
-    print(obj$center)
     finalurl <- paste0(baseurl,usertoken,"/geolookup/q/",obj$center,".xml")
     pwsXML <- XML::xmlTreeParse(finalurl, useInternalNodes=TRUE)
     pwsRoot <- XML::xmlRoot(pwsXML)
@@ -37,7 +35,6 @@ getStations <- function(zip, radius=10, state, country){
 # State Code entered
 #
   if(!is.na(obj$state)){
-    print(obj$state)
     finalurl <- paste0(baseurl,usertoken,"/geolookup/q/",obj$state,".xml")
     pwsXML <- XML::xmlTreeParse(finalurl, useInternalNodes=TRUE)
     pwsRoot <- XML::xmlRoot(pwsXML)
@@ -49,7 +46,6 @@ getStations <- function(zip, radius=10, state, country){
 # Country Code entered
 #
   if(!is.na(obj$country)){
-    print(obj$country)
     countryName <- countryCd[countryCd$ISO3==obj$country,1]
     finalurl <- paste0(baseurl,usertoken,"/geolookup/q/",countryName,".xml")
     pwsXML <- XML::xmlTreeParse(finalurl, useInternalNodes=TRUE)

@@ -1,4 +1,6 @@
 library(shiny)
+library(maps)
+library(leafletR)
 shinyUI(
   fluidPage(
       titlePanel("ProjectPWS"),
@@ -16,7 +18,10 @@ shinyUI(
             column(12,wellPanel(uiOutput("ui3"))))
         ),
         mainPanel(
-          tabPanel('stations',dataTableOutput('stnTable'))
+          tabsetPanel(
+            id = "display",
+            tabPanel("Map",shiny::includeHTML(leaflet(base.map="mqsat"))),
+            tabPanel("Table",dataTableOutput('stnTable')))
         ),
         position="left",
         fluid=FALSE

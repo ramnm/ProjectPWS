@@ -2,6 +2,7 @@
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 ##
 library(shiny)
+library(leafletR)
 shinyServer(function(input,output){
   output$ui <- renderUI({
     if(is.null(input$input_type)) return()
@@ -28,7 +29,7 @@ shinyServer(function(input,output){
     actionButton("getData",label="Get Stations")
   })
 #
-  output$stnTable <- renderDataTable({
+  buildObj <- reactive({
     if(input$getData == 0) return()
     a <- isolate(input$zipcode)
     b <- isolate(input$range)
@@ -38,7 +39,22 @@ shinyServer(function(input,output){
                    "Zip Code" = c <- d <- NA,
                    "State Code" = a <- b <- d <- NA,
                    "Country Code" = a <- b <- c <- NA)
-    obj <- ProjectPWS::getStations(a, b, c, d)
+    ProjectPWS::getStations(a, b, c, d)
+  })
+#
+  output$stnTable <- renderDataTable({
+    obj <- buildObj()
     obj$stations
   })
+#
+#  output$map <- renderUI({
+#    obj <- buildObj()
+#    tempDT <- obj$stations
+#    x = c(min(as.numeric(tempDT$long)),max(as.numeric(tempDT$long)))
+#    y = c(min(as.numeric(tempDT$lat)),max(as.numeric(tempDT$lat)))
+#    print(x)
+#    print(y)
+#    map("state",fill = FALSE,lwd = 0.05)
+#     includeHTML(leaflet(base.map="mqsat"))
+#  })
 })
