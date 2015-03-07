@@ -2,59 +2,85 @@
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 ##
 library(shiny)
-library(leafletR)
+library(ggmap)
 shinyServer(function(input,output){
-  output$ui <- renderUI({
-    if(is.null(input$input_type)) return()
+#
+  output$ui11 <- renderUI({
     switch(input$input_type,
-      "Zip Code" = textInput("zipcode", label = "Zip Code"),
-      "State Code" = selectInput("stcode","State Code",stateCd$Code),
-      "Country Code" = selectInput("country","Country Code",
-                                   countryCd$ISO3),
-      "Local File" = fileInput("file",label = "File")
+           "Zip Code" = textInput("zipcode", label = "Zip Code"),
+           "State Code" = selectInput("stcode","State Code",stateCd$Code),
+           "Country Code" = selectInput("country","Country Code",
+                                       countryCd$ISO3),
+           "Local File" = fileInput("file",label = "File")
     )
   })
 #
-  output$ui2 <- renderUI({
-    if(is.null(input$input_type)) return()
-    switch(input$input_type,
-      "Zip Code" = sliderInput("range",label = "Range",
-                               min=0,max=40,value=0),
-      "Local File" = verbatimTextOutput("value")
-    )
-  })
-#
-  output$ui3 <- renderUI({
-    if(is.null(input$input_type)) return()
-    actionButton("getData",label="Get Stations")
+  output$ui12 <- renderUI({
+    if(input$input_type == "Zip Code") {
+      sliderInput("range",label = "Range",min=0,max=40,value=0)
+    }
   })
 #
   buildObj <- reactive({
-    if(input$getData == 0) return()
-    a <- isolate(input$zipcode)
-    b <- isolate(input$range)
-    c <- isolate(input$stcode)
-    d <- isolate(input$country)
-    switch(isolate(input$input_type),
-                   "Zip Code" = c <- d <- NA,
-                   "State Code" = a <- b <- d <- NA,
-                   "Country Code" = a <- b <- c <- NA)
-    ProjectPWS::getStations(a, b, c, d)
+    if(input$getStations > 0){
+      print("in buildobj")
+      a <- isolate(input$zipcode)
+      b <- isolate(input$range)
+      c <- isolate(input$stcode)
+      d <- isolate(input$country)
+      switch(isolate(input$input_type),
+             "Zip Code" = c <- d <- NA,
+             "State Code" = a <- b <- d <- NA,
+             "Country Code" = a <- b <- c <- NA)
+      ProjectPWS::getStations(a, b, c, d)
+    }
   })
+#
+  output$stnMap <- renderPlot({
+    print("in stnMap server")
+    if(input$getStations > 0){
+      obj <- buildObj()
+      stnTable <- obj$stations
+      pins <- data.frame(lon=as.numeric(stnTable$long),
+                         lat=as.numeric(stnTable$lat))
+      mapCenter <- c(mean(pins$lon),mean(pins$lat))
+      x <- get_googlemap(center=mapCenter,
+                         zoom=10,
+                         size=c(640,640),
+                         scale=2,
+                         maptype="roadmap")
+      x <- ggmap(x,extent="panel")
+      x <- x + geom_point(aes(x=lon,y=lat),
+                          data=pins,
+                          colour="DarkBlue",
+                          fill="DarkBlue",
+                          size=5)
+                          #shape=6,
+                          #alpha=.5)
+      print(x)
+    }
+  }, width=800, height=800)
 #
   output$stnTable <- renderDataTable({
-    obj <- buildObj()
-    obj$stations
+    print("in stnTable server")
+    if(input$getStations > 0){
+      obj <- buildObj()
+      obj$stations
+    }
   })
 #
-#  output$map <- renderUI({
-#    obj <- buildObj()
-#    tempDT <- obj$stations
-#    x = c(min(as.numeric(tempDT$long)),max(as.numeric(tempDT$long)))
-#    y = c(min(as.numeric(tempDT$lat)),max(as.numeric(tempDT$lat)))
-#    print(x)
-#    print(y)
-#    map("state",fill = FALSE,lwd = 0.05)
-#     includeHTML(leaflet(base.map="mqsat"))
-#  })
+  output$weatherMap <- renderPlot({
+      x <- get_googlemap(zoom=3,
+                         size=c(640,640),
+                         scale=2,
+                         maptype="roadmap")
+      x <- ggmap(x,extent="panel")
+#      x <- x + geom_point(aes(x=lon,y=lat),
+#                          data=pins,
+#                          colour="Blue",
+#                          size=2.5,
+#                          shape=6,
+#                          alpha=.5)
+      print(x)
+  }, width=800, height=800)
 })
