@@ -22,6 +22,7 @@ PWStations <- R6::R6Class("PWStations",
     initialize = function(latlong = NA, zip = NA, state = NA, country = NA, city = NA, radius = NA) {
       if (all(is.na(latlong),
               is.na(zip),
+              is.na(state),
               is.na(country),
               is.na(city))) {
         stop("A valid location must be specified.")
@@ -53,7 +54,7 @@ PWStations <- R6::R6Class("PWStations",
       # Check zipcode
       if (!is.na(zip)) {
         if (!is.na(queryArg)) {
-          stop("Please specify a single location parameter (latlong, zipcode, state/city or country/city.")
+          stop("Please specify a single location parameter (latlong, zipcode, state, country, state and city or country and city")
         }
 
         if (!is.character(zip) || nchar(zip) != 5 || !any(zipcodes[zipcodes$zip == zip, 1])) {
@@ -63,43 +64,44 @@ PWStations <- R6::R6Class("PWStations",
         queryArg <- zip
       }
 
-      # Check for a city (since we require it for state OR country)
-      if (!is.na(city)) {
-        if (!is.na(queryArg)) {
-          stop("Please specify a single location parameter (latlong, zipcode, state/city or country/city.")
-        }
-
-        if (!is.character(city)) {
-          stop("Please specify city as a chracter string.")
-        }
-
-        # Don't build the arg just yet
-      }
-
       # Check for a state
       if (!is.na(state)) {
         if (!is.na(queryArg)) {
-          stop("Please specify a single location parameter (latlong, zipcode, state/city or country/city.")
+          stop("Please specify a single location parameter (latlong, zipcode, state, country, state and city or country and city")
         }
 
         if (!is.character(state) || nchar(state) != 2) {
           stop("Please specify state as a length 2 chracter string.")
         }
 
-        queryArg <- paste0(state, "/", city)
+        queryArg <- state
       }
 
       # Check for a country
       if (!is.na(country)) {
         if (!is.na(queryArg)) {
-          stop("Please specify a single location parameter (latlong, zipcode, state/city or country/city.")
+          stop("Please specify a single location parameter (latlong, zipcode, state, country, state and city or country and city")
         }
 
         if (!is.character(country)) {
           stop("Please specify country as a chracter string.")
         }
 
-        queryArg <- paste0(country, "/", city)
+        queryArg <- country
+      }
+
+      # Check for a city
+      if (!is.na(city)) {
+        if (!is.character(city)) {
+          stop("Please specify city as a chracter string.")
+        }
+
+        if (is.na(state) && is.na(country)) {
+          stop("Please specify a state or country along with the city.")
+        }
+
+        region <- ifelse(is.na(state), country, state)
+        queryArg <- paste0(region, "/", city)
       }
 
       self$latlong <- latlong

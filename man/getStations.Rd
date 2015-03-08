@@ -12,13 +12,13 @@ getStations(latlong = NA, zip = NA, state = NA, country = NA,
 
 \item{zip}{Character string representing a US zip code.}
 
-\item{state}{US two character state code, a city must also be supplied.}
+\item{state}{US two character state code, a city may also be supplied. If no city is supplied, all cities returned for that state will be queried (may take a lot of time).}
 
-\item{country}{Name of a (non-US) country.}
+\item{country}{Name of a (non-US) country. If no city is supplied, all cities returned for that country will be queried (may take a lot of time).}
 
 \item{city}{Name of the requested city.}
 
-\item{radius}{Optional radius in miles to limit results to. Must be a numeric value greater than 0 but less than 25.}
+\item{radius}{Optional radius in miles to limit results to. Must be a numeric value greater than 0 but less than 25. If querying by state or country, the behavior here may not be intuitive.}
 }
 \value{
 A PWStations object with the nearby stations meeting the specified criteria.
@@ -28,6 +28,7 @@ Queries the WUnderground API to get all PWS meeting the specified criteria. Vali
 \itemize{
   \item A numeric vector specifying a lat/long pair.
   \item A US zipcode character string.
+  \item A US state or non-US country name.
   \item A US state and city pair.
   \item A non-US country name and city pair.
 }
@@ -41,6 +42,7 @@ latLongStations <- getStations(latlong = c(35.229, 80.8433), radius = 2) # Charl
 zipStations <- getStations(zip = "90210", radius = 10)
 berlinStations <- getStations(country = "Germany", city = "Berlin")
 cityStations <- getStations(state = "Oregon", city = "Portand", radius = 3)
+countryStations <- getStations(country = "Spain")
 }
 }
 \author{

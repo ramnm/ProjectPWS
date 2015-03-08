@@ -139,6 +139,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA, weatherVars = c
     # Generate a table for a single day
     obsHandler <- observationHandler(day)
     xmlEventParse(file = historyUrl,
+                  handlers = NULL,
                   branches = obsHandler,
                   isURL = TRUE)
 
