@@ -7,22 +7,22 @@
 #'   \item A US state and city pair.
 #'   \item A non-US country name and city pair.
 #' }
-#' The API limits to PWS within 40km of the zipcode and only the first 50 results.
-#' An optional numeric kilometer radius restrictionmay be supplied, limiting to stations within that distance from
-#' the specified location. Anything greater than 40 will be ignored.
+#' The API limits to PWS within 40km (around 25 miles) of the zipcode and only the first 50 results.
+#' An optional numeric mile radius restriction may be supplied, limiting to stations within that distance from
+#' the specified location. Anything greater than 24 will be ignored (due to the API limitation).
 #'
 #' @param latlong A numeric vector specifying latitude and longitude.
 #' @param zip Character string representing a US zip code.
 #' @param state US two character state code, a city must also be supplied.
 #' @param country Name of a (non-US) country.
 #' @param city Name of the requested city.
-#' @param radius Radius in kilometers. Must be a numeric value greater than 0 but less than 40.
+#' @param radius Optional radius in miles to limit results to. Must be a numeric value greater than 0 but less than 25.
 #' @return A PWStations object with weather stations data
 #' @export getStations
 #' @examples
 #' \dontrun{
 #' latLongStations <- getStations(latlong = c(35.229, 80.8433), radius = 2) # Charlotte
-#' zipStations <- getStations(zip = "90210", radius = 15)
+#' zipStations <- getStations(zip = "90210", radius = 10)
 #' berlinStations <- getStations(country = "Germany", city = "Berlin")
 #' cityStations <- getStations(state = "Oregon", city = "Portand", radius = 3)
 #' }
@@ -53,7 +53,7 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA, city =
   pwsRoot <- XML::xmlRoot(pwsXML)
   pwsNamespace <- XML::getDefaultNamespace(pwsRoot)
   pwsPath <- paste0("/response/location/nearby_weather_stations/pws",
-                    sprintf("/station[distance_km<=%d]", radius))
+                    sprintf("/station[distance_mi<=%d]", radius))
 
   result <- XML::getNodeSet(pwsRoot, pwsPath, pwsNamespace)
 

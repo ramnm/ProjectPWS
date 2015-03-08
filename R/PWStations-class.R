@@ -19,6 +19,7 @@ PWStations <- R6::R6Class("PWStations",
     radius = NA,
     queryArg = NA,
     stations = NA,
+    weatherData = NA,
     initialize = function(latlong = NA, zip = NA, state = NA, country = NA, city = NA, radius = NA) {
       if (all(is.na(latlong),
               is.na(zip),
@@ -32,9 +33,9 @@ PWStations <- R6::R6Class("PWStations",
         stop("Radius must be numeric.")
       }
 
-      # Check the bounds and default to just outside the max (40)
-      if (is.na(radius) || radius < 0 || radius > 40) {
-        radius <- 40
+      # Check the bounds and default to just outside the max (25)
+      if (is.na(radius) || radius < 0 || radius > 24) {
+        radius <- 25
       }
 
       # Build the query argument as we check

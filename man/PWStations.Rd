@@ -4,7 +4,7 @@
 \name{PWStations}
 \alias{PWStations}
 \title{R6 Class used to hold the result of a Wunderground PWS query.}
-\format{\preformatted{Class 'R6ClassGenerator' <environment: 0x00000000089f1f68> 
+\format{\preformatted{Class 'R6ClassGenerator' <environment: 0x00000000092c2be8> 
  - attr(*, "name")= chr "PWStations_generator"
 }}
 \usage{

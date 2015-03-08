@@ -7,6 +7,7 @@
 #' @param weatherVars Variables to retrieve, must be one of "tempi" (temperature imperial i.e. Fahrenheit), "hum" (humidity)
 #' @param stationLimit This restricts to the first stationLimit stations. -1 signals to retrieve all in the table.
 #' @return List of data frames, one for each weather station in the original PWStations object. The name of each element is the station's ID.
+#' Note that this is also accessible from the supplied PWStations object.
 #' @export
 #' @examples
 #' \dontrun{
@@ -156,5 +157,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA, weatherVars = c
   })
   names(allStations) <- stationIds
 
-  allStations
+  pwsStations$weatherData <- allStations
+
+  pwsStations$weatherData
 }

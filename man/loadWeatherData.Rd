@@ -20,6 +20,7 @@ loadWeatherData(pwStations, startDate, endDate = NA,
 }
 \value{
 List of data frames, one for each weather station in the original PWStations object. The name of each element is the station's ID.
+Note that this is also accessible from the supplied PWStations object.
 }
 \description{
 This function will query the wunderground site and retrieve the weather data for each PW Station, over the specified time period.

@@ -18,7 +18,7 @@ getStations(latlong = NA, zip = NA, state = NA, country = NA,
 
 \item{city}{Name of the requested city.}
 
-\item{radius}{Radius in kilometers. Must be a numeric value greater than 0 but less than 40.}
+\item{radius}{Optional radius in miles to limit results to. Must be a numeric value greater than 0 but less than 25.}
 }
 \value{
 A PWStations object with weather stations data
@@ -31,14 +31,14 @@ Queries the WUnderground API to get all PWS meeting the specified criteria. Vali
   \item A US state and city pair.
   \item A non-US country name and city pair.
 }
-The API limits to PWS within 40km of the zipcode and only the first 50 results.
-An optional numeric kilometer radius restrictionmay be supplied, limiting to stations within that distance from
-the specified location. Anything greater than 40 will be ignored.
+The API limits to PWS within 40km (around 25 miles) of the zipcode and only the first 50 results.
+An optional numeric mile radius restriction may be supplied, limiting to stations within that distance from
+the specified location. Anything greater than 24 will be ignored (due to the API limitation).
 }
 \examples{
 \dontrun{
 latLongStations <- getStations(latlong = c(35.229, 80.8433), radius = 2) # Charlotte
-zipStations <- getStations(zip = "90210", radius = 15)
+zipStations <- getStations(zip = "90210", radius = 10)
 berlinStations <- getStations(country = "Germany", city = "Berlin")
 cityStations <- getStations(state = "Oregon", city = "Portand", radius = 3)
 }
