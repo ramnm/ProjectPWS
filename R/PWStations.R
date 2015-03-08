@@ -1,14 +1,13 @@
-#' R6 Class used to hold the result of a Wunderground PWS query.
+#' PWS Storage
+#' @docType class
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 #' @description This class holds the result of a WUnderground API query. The parameters imply
 #' the query used (i.e. if zip is set, a zip lookup was performed) and the resulting stations
 #' are stored in a stations data table.
-#' @import methods data.table R6
-#' @exportClass PWStations
-#' @examples
-#' \dontrun{
-#' atLongStations <- getStations(latlong = c(35.229, 80.8433), radius = 2) # Charlotte
-#' }
+#' @importFrom R6 R6Class
+#' @format An \code{\link{R6Class}} generator object
+#' @keywords PWS, Wunderground
+#' @seealso \code{\link{getStations}} for a method that will generate an object. See \code{\link{loadWeatherData}} to load weather data for the selected PWS stations.
 PWStations <- R6::R6Class("PWStations",
   public = list(
     latlong = NA,

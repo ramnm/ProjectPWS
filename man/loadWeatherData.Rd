@@ -2,7 +2,7 @@
 % Please edit documentation in R/loadWeatherData.R
 \name{loadWeatherData}
 \alias{loadWeatherData}
-\title{Queries WUnderground and retrieves the specified weather variables over the requested time range, for each station in the PWStations object.}
+\title{Load PWS Weather Data}
 \usage{
 loadWeatherData(pwStations, startDate, endDate = NA,
   weatherVars = c("tempi", "hum"), stationLimit = -1L)

@@ -2,7 +2,7 @@
 % Please edit documentation in R/getStations.R
 \name{getStations}
 \alias{getStations}
-\title{Returns the nearby Personal Weather Stations according to the location requested.}
+\title{Retrieve PWS}
 \usage{
 getStations(latlong = NA, zip = NA, state = NA, country = NA,
   city = NA, radius = NA)
@@ -21,7 +21,7 @@ getStations(latlong = NA, zip = NA, state = NA, country = NA,
 \item{radius}{Optional radius in miles to limit results to. Must be a numeric value greater than 0 but less than 25.}
 }
 \value{
-A PWStations object with weather stations data
+A PWStations object with the nearby stations meeting the specified criteria.
 }
 \description{
 Queries the WUnderground API to get all PWS meeting the specified criteria. Valid queries are as follows:
@@ -45,5 +45,8 @@ cityStations <- getStations(state = "Oregon", city = "Portand", radius = 3)
 }
 \author{
 Maruthi Ram Nadakuduru, Jared Casale
+}
+\seealso{
+\code{\link{loadWeatherData}} for a method to retrieve weather data for each of the retrieved stations.
 }
 

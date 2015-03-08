@@ -1,4 +1,4 @@
-#' Queries WUnderground and retrieves the specified weather variables over the requested time range, for each station in the PWStations object.
+#' Load PWS Weather Data
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 #' @description This function will query the wunderground site and retrieve the weather data for each PW Station, over the specified time period.
 #' @param pwStations PWStation object containing the stations that require data.
@@ -157,7 +157,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA, weatherVars = c
   })
   names(allStations) <- stationIds
 
-  pwsStations$weatherData <- allStations
+  pwStations$weatherData <- allStations
 
-  pwsStations$weatherData
+  pwStations$weatherData
 }

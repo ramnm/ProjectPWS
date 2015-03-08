@@ -3,7 +3,4 @@
 export(getStations)
 export(loadWeatherData)
 export(startShiny)
-exportClasses(PWStations)
-import(R6)
-import(data.table)
-import(methods)
+importFrom(R6,R6Class)

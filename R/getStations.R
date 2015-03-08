@@ -1,4 +1,4 @@
-#' Returns the nearby Personal Weather Stations according to the location requested.
+#' Retrieve PWS
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 #' @description Queries the WUnderground API to get all PWS meeting the specified criteria. Valid queries are as follows:
 #' \itemize{
@@ -17,7 +17,8 @@
 #' @param country Name of a (non-US) country.
 #' @param city Name of the requested city.
 #' @param radius Optional radius in miles to limit results to. Must be a numeric value greater than 0 but less than 25.
-#' @return A PWStations object with weather stations data
+#' @return A PWStations object with the nearby stations meeting the specified criteria.
+#' @seealso \code{\link{loadWeatherData}} for a method to retrieve weather data for each of the retrieved stations.
 #' @export getStations
 #' @examples
 #' \dontrun{
