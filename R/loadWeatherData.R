@@ -79,7 +79,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA, weatherVars = c
     nextHour <- 0
 
     observation <- function(context, node, attrs, ...) {
-      hour <- as.numeric(xmlValue(node[["date"]][["hour"]]))
+      hour <- as.numeric(XML::xmlValue(node[["date"]][["hour"]]))
 
       if (hour >= nextHour) {
         if (hour > nextHour) {
@@ -98,7 +98,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA, weatherVars = c
         # We are at the first point of the next hour
         nextHour <<- hour + 1
         lapply(weatherVars, function(var) tableVars[[var]] <<- c(tableVars[[var]],
-                                                                         as.numeric(xmlValue(node[[var]]))))
+                                                                         as.numeric(XML::xmlValue(node[[var]]))))
         tableHours <<- c(tableHours, hour)
       }
     }
@@ -121,7 +121,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA, weatherVars = c
       }
     }
 
-    c(observation = xmlParserContextFunction(observation),
+    c(observation = XML::xmlParserContextFunction(observation),
       getWeatherDT = getWeatherDT)
   }
 
@@ -138,10 +138,10 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA, weatherVars = c
 
     # Generate a table for a single day
     obsHandler <- observationHandler(day)
-    xmlEventParse(file = historyUrl,
-                  handlers = NULL,
-                  branches = obsHandler,
-                  isURL = TRUE)
+    XML::xmlEventParse(file = historyUrl,
+                              handlers = NULL,
+                              branches = obsHandler,
+                              isURL = TRUE)
 
     obsHandler$getWeatherDT()
   }
