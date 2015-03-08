@@ -1,37 +1,114 @@
-#' Function defining the PWStations R6 class
+#' R6 Class used to hold the result of a Wunderground PWS query.
 #' @author Maruthi Ram Nadakuduru, Jared Casale
-#' @description This function includes all the definitions of the PWStations
-#'              R6 class.
+#' @description This class holds the result of a WUnderground API query. The parameters imply
+#' the query used (i.e. if zip is set, a zip lookup was performed) and the resulting stations
+#' are stored in a stations data table.
 #' @import methods data.table R6
 #' @exportClass PWStations
-## @examples
-## \dontrun{plotQuakes("red")}
-##
+#' @examples
+#' \dontrun{
+#' atLongStations <- getStations(latlong = c(35.229, 80.8433), radius = 2) # Charlotte
+#' }
 PWStations <- R6::R6Class("PWStations",
   public = list(
-    center = NA,
-    range = NA,
+    latlong = NA,
+    zip = NA,
     state = NA,
     country = NA,
+    city = NA,
+    radius = NA,
+    queryArg = NA,
     stations = NA,
-    initialize = function(center,range,state,country,stations) {
-      if (is.na(center) &
-          is.na(state) &
-          is.na(country)) {
-        return("Please enter either zip, state or country code")
+    initialize = function(latlong = NA, zip = NA, state = NA, country = NA, city = NA, radius = NA) {
+      if (all(is.na(latlong),
+              is.na(zip),
+              is.na(country),
+              is.na(city))) {
+        stop("A valid location must be specified.")
       }
-      if (!is.na(center)) {
-        if (!any(zipcodes[zipcodes$zip==center,1])) {
-          return("Please enter a valid zip code")
-        } else {
-          self$center <- center
-          self$range <- range
+
+      # Radius must be numeric if specified
+      if (!is.na(radius) && !is.numeric(radius)) {
+        stop("Radius must be numeric.")
+      }
+
+      # Check the bounds and default to just outside the max (40)
+      if (is.na(radius) || radius < 0 || radius > 40) {
+        radius <- 40
+      }
+
+      # Build the query argument as we check
+      queryArg <- NA
+
+      # Check latlong
+      if (!is.na(latlong)) {
+        # Lat/long specified
+        if (!is.numeric(latlong) || length(latlong) != 2) {
+          stop("Latlong must be two numeric values.")
         }
+
+        queryArg <- paste0(latlong[1], ",", paste[2])
       }
-#
-      if (!is.na(state)) {self$state <- state}
-#
-      if (!is.na(country)) {self$country <- country}
+
+      # Check zipcode
+      if (!is.na(zip)) {
+        if (!is.na(queryArg)) {
+          stop("Please specify a single location parameter (latlong, zipcode, state/city or country/city.")
+        }
+
+        if (!is.character(zip) || nchar(zip) != 5 || !any(zipcodes[zipcodes$zip == zip, 1])) {
+          stop("Please specify a valid zipcode string.")
+        }
+
+        queryArg <- zip
+      }
+
+      # Check for a city (since we require it for state OR country)
+      if (!is.na(city)) {
+        if (!is.na(queryArg)) {
+          stop("Please specify a single location parameter (latlong, zipcode, state/city or country/city.")
+        }
+
+        if (!is.character(city)) {
+          stop("Please specify city as a chracter string.")
+        }
+
+        # Don't build the arg just yet
+      }
+
+      # Check for a state
+      if (!is.na(state)) {
+        if (!is.na(queryArg)) {
+          stop("Please specify a single location parameter (latlong, zipcode, state/city or country/city.")
+        }
+
+        if (!is.character(state) || nchar(state) != 2) {
+          stop("Please specify state as a length 2 chracter string.")
+        }
+
+        queryArg <- paste0(state, "/", city)
+      }
+
+      # Check for a country
+      if (!is.na(country)) {
+        if (!is.na(queryArg)) {
+          stop("Please specify a single location parameter (latlong, zipcode, state/city or country/city.")
+        }
+
+        if (!is.character(country)) {
+          stop("Please specify country as a chracter string.")
+        }
+
+        queryArg <- paste0(country, "/", city)
+      }
+
+      self$latlong <- latlong
+      self$zip <- zip
+      self$state <- state
+      self$country <- country
+      self$city <- city
+      self$radius <- radius
+      self$queryArg <- queryArg
     }
   )
 )

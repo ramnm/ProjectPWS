@@ -3,16 +3,22 @@
 \docType{data}
 \name{PWStations}
 \alias{PWStations}
-\title{Function defining the PWStations R6 class}
-\format{\preformatted{Class 'R6ClassGenerator' <environment: 0x0000000005db7420> 
+\title{R6 Class used to hold the result of a Wunderground PWS query.}
+\format{\preformatted{Class 'R6ClassGenerator' <environment: 0x00000000089f1f68> 
  - attr(*, "name")= chr "PWStations_generator"
 }}
 \usage{
 PWStations
 }
 \description{
-This function includes all the definitions of the PWStations
-             R6 class.
+This class holds the result of a WUnderground API query. The parameters imply
+the query used (i.e. if zip is set, a zip lookup was performed) and the resulting stations
+are stored in a stations data table.
+}
+\examples{
+\dontrun{
+atLongStations <- getStations(latlong = c(35.229, 80.8433), radius = 2) # Charlotte
+}
 }
 \author{
 Maruthi Ram Nadakuduru, Jared Casale

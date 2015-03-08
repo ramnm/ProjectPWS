@@ -17,8 +17,11 @@ shinyServer(function(input,output){
   output$ui2 <- renderUI({
     if(is.null(input$input_type)) return()
     switch(input$input_type,
-      "Zip Code" = sliderInput("range",label = "Range",
-                               min=0,max=40,value=0),
+      "Zip Code" = sliderInput("range",
+                               label = "Range",
+                               min = 0,
+                               max = 40,
+                               value = 3),
       "Local File" = verbatimTextOutput("value")
     )
   })
@@ -38,7 +41,7 @@ shinyServer(function(input,output){
                    "Zip Code" = c <- d <- NA,
                    "State Code" = a <- b <- d <- NA,
                    "Country Code" = a <- b <- c <- NA)
-    obj <- ProjectPWS::getStations(a, b, c, d)
+    obj <- ProjectPWS::getStations(zip = a, radius = b, state = c, country = d)
     obj$stations
   })
 })

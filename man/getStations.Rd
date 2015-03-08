@@ -2,19 +2,46 @@
 % Please edit documentation in R/getStations.R
 \name{getStations}
 \alias{getStations}
-\title{Returns the Personal Weather Stations nearby input provided}
+\title{Returns the nearby Personal Weather Stations according to the location requested.}
 \usage{
-getStations(zip = NA, radius = 10, state = NA, country = NA)
+getStations(latlong = NA, zip = NA, state = NA, country = NA,
+  city = NA, radius = NA)
 }
 \arguments{
-\item{Zip}{Code and the radius in kilometers}
+\item{latlong}{A numeric vector specifying latitude and longitude.}
+
+\item{zip}{Character string representing a US zip code.}
+
+\item{state}{US two character state code, a city must also be supplied.}
+
+\item{country}{Name of a (non-US) country.}
+
+\item{city}{Name of the requested city.}
+
+\item{radius}{Radius in kilometers. Must be a numeric value greater than 0 but less than 40.}
 }
 \value{
-PWStations class with weather stations data
+A PWStations object with weather stations data
 }
 \description{
-This function accepts the zip code and a radius in km and
-             returns all the stations in that range in the PWStations class.
+Queries the WUnderground API to get all PWS meeting the specified criteria. Valid queries are as follows:
+\itemize{
+  \item A numeric vector specifying a lat/long pair.
+  \item A US zipcode character string.
+  \item A US state and city pair.
+  \item A non-US country name and city pair.
+}
+The API limits to PWS within 40km of the zipcode and only the first 50 results.
+An optional numeric kilometer radius restrictionmay be supplied, limiting to stations within that distance from
+the specified location. Anything greater than 40 will be ignored.
+}
+\examples{
+\dontrun{
+latLongStations <- getStations(latlong = c(35.229, 80.8433), radius = 2) # Charlotte
+zipStations <- getStations(zip = "90210", radius = 15)
+berlinStations <- getStations(country = "Germany", city = "Berlin")
+cityStations <- getStations(state = "Oregon", city = "Portand", radius = 3)
+}
 }
 \author{
 Maruthi Ram Nadakuduru, Jared Casale
