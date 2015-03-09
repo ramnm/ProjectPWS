@@ -23,12 +23,11 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA, weatherVars = c
 
   # Get the stations - is it empty?
   stationsTable <- stations$stations
-
   if (is.na(stationsTable) || nrow(stationsTable) == 0) {
     stop("Need at least one PW Station.")
   }
 
-  if (stationLimit > 0) {
+  if (stationLimit > 0 && stationLimit < nrow(stationsTable)) {
     stationsTable <- stationsTable[1:stationLimit, ]
   }
 
@@ -146,7 +145,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA, weatherVars = c
     obsHandler$getWeatherDT()
   }
 
-  # This call is a for each station id, for each day, get the weather data then combine into a single
+  # This call is essentially for each station id, for each day, get the weather data then combine into a single
   # data table for each station and into a list of data tables, one for each station.
   print(sprintf("There are %d stations to query over %d days. This may take a while.", length(stationIds), length(days)))
   stationCount <- 1

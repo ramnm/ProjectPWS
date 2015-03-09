@@ -23,7 +23,7 @@
 #' @export getStations
 #' @examples
 #' \dontrun{
-#' latLongStations <- getStations(latlong = c(35.229, 80.8433), radius = 2) # Charlotte
+#' latLongStations <- getStations(latlong = c(35.229, -80.8433), radius = 2) # Charlotte
 #' zipStations <- getStations(zip = "90210", radius = 10)
 #' berlinStations <- getStations(country = "Germany", city = "Berlin")
 #' cityStations <- getStations(state = "Oregon", city = "Portand", radius = 3)
@@ -36,6 +36,7 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA, city =
                                  zip = zip,
                                  state = state,
                                  country = country,
+                                 city = city,
                                  radius = radius)
 
   # Retrieve the API key from environment variable

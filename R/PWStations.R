@@ -17,8 +17,8 @@ PWStations <- R6::R6Class("PWStations",
     city = NA,
     radius = NA,
     queryArg = NA,
-    stations = NA,
-    weatherData = NA,
+    stations =  NULL,
+    weatherData = NULL,
     initialize = function(latlong = NA, zip = NA, state = NA, country = NA, city = NA, radius = NA) {
       if (all(is.na(latlong),
               is.na(zip),
@@ -42,13 +42,13 @@ PWStations <- R6::R6Class("PWStations",
       queryArg <- NA
 
       # Check latlong
-      if (!is.na(latlong)) {
+      if (!any(is.na(latlong))) {
         # Lat/long specified
         if (!is.numeric(latlong) || length(latlong) != 2) {
           stop("Latlong must be two numeric values.")
         }
 
-        queryArg <- paste0(latlong[1], ",", paste[2])
+        queryArg <- paste0(latlong[1], ",", latlong[2])
       }
 
       # Check zipcode

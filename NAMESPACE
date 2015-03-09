@@ -2,5 +2,6 @@
 
 export(getStations)
 export(loadWeatherData)
-export(startShiny)
+export(makeStationSubtable)
+export(pwsWebapp)
 importFrom(R6,R6Class)
