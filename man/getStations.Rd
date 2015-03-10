@@ -2,21 +2,65 @@
 % Please edit documentation in R/getStations.R
 \name{getStations}
 \alias{getStations}
-\title{Returns the Personal Weather Stations nearby input provided}
+\title{Retrieve PWS}
 \usage{
-getStations(zip, radius = 10, state, country)
+getStations(latlong = NA, zip = NA, state = NA, country = NA,
+  city = NA, radius = NA)
 }
 \arguments{
-\item{Zip}{Code and the radius in kilometers}
+\item{latlong}{A numeric vector specifying latitude and longitude.}
+
+\item{zip}{Character string representing a US zip code.}
+
+\item{state}{US two character state code, a city may also be supplied. If
+no city is supplied, all cities returned for that state will be
+queried (may take a lot of time).}
+
+\item{country}{Name of a (non-US) country. If no city is supplied, all
+cities returned for that country will be queried (may take a lot of
+time).}
+
+\item{city}{Name of the requested city.}
+
+\item{radius}{Optional radius in miles to limit results to. Must be a
+numeric value greater than 0 but less than 25. If querying by state
+or country, the behavior here may not be intuitive.}
 }
 \value{
-PWStations class with weather stations data
+A PWStations object with the nearby stations meeting the specified
+        criteria.
 }
 \description{
-This function accepts the zip code and a radius in km and
-             returns all the stations in that range in the PWStations class.
+Queries the WUnderground API to get all PWS meeting the
+             specified criteria. Valid queries are as follows:
+\itemize{
+  \item A numeric vector specifying a lat/long pair.
+  \item A US zipcode character string.
+  \item A US state or non-US country name.
+  \item A US state and city pair.
+  \item A non-US country name and city pair.
+}
+The API limits to PWS within 40km (around 25 miles) of the zipcode and only
+the first 50 results. An optional numeric mile radius restriction may be
+supplied, limiting to stations within that distance from the specified
+location. Anything greater than 24 will be ignored
+(due to the API limitation).
+}
+\examples{
+\dontrun{
+latLongStations <- getStations(latlong = c(35.229, -80.8433), radius = 2)
+# Charlotte
+zipStations <- getStations(zip = "90210", radius = 10)
+berlinStations <- getStations(country = "Germany", city = "Berlin")
+cityStations <- getStations(state = "Oregon", city = "Portand", radius = 3)
+countryStations <- getStations(country = "Spain")
+}
 }
 \author{
 Maruthi Ram Nadakuduru, Jared Casale
+}
+\seealso{
+\code{\link{loadWeatherData}} for a method to retrieve weather data
+        for each of the retrieved stations.
 }
 

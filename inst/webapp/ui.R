@@ -11,7 +11,12 @@ shinyUI(
           fluidRow(
             column(12,uiOutput("ui11"),
                       uiOutput("ui12"),
-                      actionButton("getStations",label="Get Stations")))
+                      actionButton("getStations",label="Get Stations"))),
+          fluidRow(
+            column(12,uiOutput("uiSave1"),
+                      uiOutput("uiSave2"))),
+          fluidRow(
+            column(12,uiOutput("uiSave3")))
         ),
         mainPanel(
           tabsetPanel(
@@ -48,8 +53,9 @@ shinyUI(
           fluidRow(
             column(12,radioButtons("wParm",label="Weather Attribute",
                                    choices=list("Temperature"=1,
-                                                "Wind"=2,
-                                                "Pressure"=3),selected=1))),
+                                                "Humidity"=2,
+                                                "Wind Speed"=3,
+                                                "Pressure"=4),selected=1))),
           fluidRow(
             column(12,actionButton("getWeather",label="Get Weather")))
         ),
