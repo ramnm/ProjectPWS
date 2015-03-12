@@ -12,19 +12,27 @@ getStations(latlong = NA, zip = NA, state = NA, country = NA,
 
 \item{zip}{Character string representing a US zip code.}
 
-\item{state}{US two character state code, a city may also be supplied. If no city is supplied, all cities returned for that state will be queried (may take a lot of time).}
+\item{state}{US two character state code, a city may also be supplied. If
+no city is supplied, all cities returned for that state will be
+queried (may take a lot of time).}
 
-\item{country}{Name of a (non-US) country. If no city is supplied, all cities returned for that country will be queried (may take a lot of time).}
+\item{country}{Name of a (non-US) country. If no city is supplied, all
+cities returned for that country will be queried (may take a lot of
+time).}
 
 \item{city}{Name of the requested city.}
 
-\item{radius}{Optional radius in miles to limit results to. Must be a numeric value greater than 0 but less than 25. If querying by state or country, the behavior here may not be intuitive.}
+\item{radius}{Optional radius in miles to limit results to. Must be a
+numeric value greater than 0 but less than 25. If querying by state
+or country, the behavior here may not be intuitive.}
 }
 \value{
-A PWStations object with the nearby stations meeting the specified criteria.
+A PWStations object with the nearby stations meeting the specified
+        criteria.
 }
 \description{
-Queries the WUnderground API to get all PWS meeting the specified criteria. Valid queries are as follows:
+Queries the WUnderground API to get all PWS meeting the
+             specified criteria. Valid queries are as follows:
 \itemize{
   \item A numeric vector specifying a lat/long pair.
   \item A US zipcode character string.
@@ -32,13 +40,16 @@ Queries the WUnderground API to get all PWS meeting the specified criteria. Vali
   \item A US state and city pair.
   \item A non-US country name and city pair.
 }
-The API limits to PWS within 40km (around 25 miles) of the zipcode and only the first 50 results.
-An optional numeric mile radius restriction may be supplied, limiting to stations within that distance from
-the specified location. Anything greater than 24 will be ignored (due to the API limitation).
+The API limits to PWS within 40km (around 25 miles) of the zipcode and only
+the first 50 results. An optional numeric mile radius restriction may be
+supplied, limiting to stations within that distance from the specified
+location. Anything greater than 24 will be ignored
+(due to the API limitation).
 }
 \examples{
 \dontrun{
-latLongStations <- getStations(latlong = c(35.229, -80.8433), radius = 2) # Charlotte
+latLongStations <- getStations(latlong = c(35.229, -80.8433), radius = 2)
+# Charlotte
 zipStations <- getStations(zip = "90210", radius = 10)
 berlinStations <- getStations(country = "Germany", city = "Berlin")
 cityStations <- getStations(state = "Oregon", city = "Portand", radius = 3)
@@ -49,6 +60,7 @@ countryStations <- getStations(country = "Spain")
 Maruthi Ram Nadakuduru, Jared Casale
 }
 \seealso{
-\code{\link{loadWeatherData}} for a method to retrieve weather data for each of the retrieved stations.
+\code{\link{loadWeatherData}} for a method to retrieve weather data
+        for each of the retrieved stations.
 }
 

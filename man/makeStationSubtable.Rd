@@ -10,42 +10,56 @@ makeStationSubtable(pwStations, newRadius = NA, numberToKeep = NA,
 \arguments{
 \item{pwStations}{A PWStations object with the data to be filtered.}
 
-\item{newRadius}{A positive numeric value representing the max distance_mi. Anything greater or equal to the original
-radius will result in no changes.}
+\item{newRadius}{A positive numeric value representing the max distance_mi.
+Anything greater or equal to the original radius will result in no
+changes.}
 
-\item{numberToKeep}{An integer value specifying the number of stations to keep, sorted by distance.}
+\item{numberToKeep}{An integer value specifying the number of stations to
+keep, sorted by distance.}
 
-\item{nearest}{Boolean value indicating if stations should be kept according to the nearest
-(sorted by increasing distance_mi) or farthest (sorted by decreasing distance_mi). Default is TRUE.}
+\item{nearest}{Boolean value indicating if stations should be kept
+according to the nearest(sorted by increasing distance_mi) or
+farthest (sorted by decreasing distance_mi). Default is TRUE.}
 
-\item{stationNames}{A vector of the names/IDs of specific stations in the table.}
+\item{stationNames}{A vector of the names/IDs of specific stations in the
+table.}
 }
 \value{
-A PWStations object representing the result of applying the specified criteria to the original object.
+A PWStations object representing the result of applying the
+        specified criteria to the original object.
 }
 \description{
-Returns a PWStations object with the specified filter applied to the original PWStations.
-If the original object contained weather data, this will also be filtered to the appropriate stations.
+Returns a PWStations object with the specified filter applied
+             to the original PWStations. If the original object contained
+             weather data, this will also be filtered to the appropriate
+             stations.
 Filter options are one of the following:
 \itemize{
-  \item Reducing the radius of the original query, so that only stations within the new radius are kept.
-  \item Choosing a number of closest or farthest stations from the original query location.
-  \item Choosing a set of stations by name.
+\item Reducing the radius of the original query, so that only stations
+\item within the new radius are kept.
+\item Choosing a number of closest or farthest stations from the original
+\item query location.
+\item Choosing a set of stations by name.
 }
 }
 \examples{
 \dontrun{
 charlotteStations <- getStations(latlong = c(35.229, -80.8433), radius = 10)
-makeStationSubtable(charlotteStations, newRadius = 5) # Decrease radius to 5 miles
+makeStationSubtable(charlotteStations, newRadius = 5) # Decrease radius to
+                                                      # 5 miles
 makeStationSubtable(charlotteStations, numberToKeep = 3) # Keep 3 closest
-makeStationSubtable(charlotteStations, numberToKeep = 3, nearest = FALSE) # Keep 3 farthest
-makeStationsSubtable(charlotteStations, stationNames = c("KNCCHARL71", "KNCCHARL83"))
+# Keep 3 farthest
+makeStationSubtable(charlotteStations, numberToKeep = 3, nearest = FALSE)
+makeStationsSubtable(charlotteStations,
+                     stationNames = c("KNCCHARL71", "KNCCHARL83"))
 }
 }
 \author{
 Maruthi Ram Nadakuduru, Jared Casale
 }
 \seealso{
-\code{\link{getStations}} for a method that will generate an object. See \code{\link{loadWeatherData}} to load weather data for the selected PWS stations.
+\code{\link{getStations}} for a method that will generate an object.
+         See \code{\link{loadWeatherData}} to load weather data for the
+         selected PWS stations.
 }
 
