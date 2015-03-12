@@ -4,5 +4,5 @@
 #' @export
 pwsWebapp <- function() {
  data(sysdata,envir=environment())
- shiny::runApp(system.file("webapp", package="ProjectPWS"))
+ shiny::runApp(system.file("shiny", package="ProjectPWS"))
 }

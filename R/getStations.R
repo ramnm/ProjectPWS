@@ -94,7 +94,8 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
 
       list(id = xmlList$id,
            city = xmlList$city,
-           state = xmlList$state,
+           state = ifelse(is.null(xmlList$state), "NA",
+                          xmlList$state),
            country = xmlList$country,
            lat = as.numeric(xmlList$lat),
            lon = as.numeric(xmlList$lon),
@@ -104,10 +105,10 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
     data.table::rbindlist(stationList)
   }
 
- # If the query is for a whole state or country, then we need to query all
- # cities in that area
+  # If the query is for a whole state or country, then we need to query all
+  # cities in that area
   if (!is.na(state) || !is.na(country) && is.na(city)) {
- # Need to request the region then each city returned for that region
+    # Need to request the region then each city returned for that region
     areaUrl <- URLencode(paste0(baseurl,
                                 usertoken,
                                 "/geolookup/q/",
@@ -134,9 +135,9 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
     })
 
     pwstationObj$stations <- data.table::rbindlist(cityTables)
-    } else {
-      pwstationObj$stations <- getAndParseStationData(pwstationObj$queryArg)
-    }
+  } else {
+    pwstationObj$stations <- getAndParseStationData(pwstationObj$queryArg)
+  }
 
   pwstationObj
 }
