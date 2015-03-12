@@ -1,35 +1,50 @@
 #' Create subtable of PWS
 #' @author Maruthi Ram Nadakuduru, Jared Casale
-#' @description Returns a PWStations object with the specified filter applied to the original PWStations.
-#' If the original object contained weather data, this will also be filtered to the appropriate stations.
+#' @description Returns a PWStations object with the specified filter applied
+#'              to the original PWStations. If the original object contained
+#'              weather data, this will also be filtered to the appropriate
+#'              stations.
 #' Filter options are one of the following:
 #' \itemize{
-#'   \item Reducing the radius of the original query, so that only stations within the new radius are kept.
-#'   \item Choosing a number of closest or farthest stations from the original query location.
-#'   \item Choosing a set of stations by name.
+#' \item Reducing the radius of the original query, so that only stations
+#' \item within the new radius are kept.
+#' \item Choosing a number of closest or farthest stations from the original
+#' \item query location.
+#' \item Choosing a set of stations by name.
 #' }
 #' @param pwStations A PWStations object with the data to be filtered.
-#' @param newRadius A positive numeric value representing the max distance_mi. Anything greater or equal to the original
-#' radius will result in no changes.
-#' @param numberToKeep An integer value specifying the number of stations to keep, sorted by distance.
-#' @param nearest Boolean value indicating if stations should be kept according to the nearest
-#' (sorted by increasing distance_mi) or farthest (sorted by decreasing distance_mi). Default is TRUE.
-#' @param stationNames A vector of the names/IDs of specific stations in the table.
-#' @return A PWStations object representing the result of applying the specified criteria to the original object.
-#' @seealso \code{\link{getStations}} for a method that will generate an object. See \code{\link{loadWeatherData}} to load weather data for the selected PWS stations.
+#' @param newRadius A positive numeric value representing the max distance_mi.
+#'        Anything greater or equal to the original radius will result in no
+#'        changes.
+#' @param numberToKeep An integer value specifying the number of stations to
+#'        keep, sorted by distance.
+#' @param nearest Boolean value indicating if stations should be kept
+#'        according to the nearest(sorted by increasing distance_mi) or
+#'        farthest (sorted by decreasing distance_mi). Default is TRUE.
+#' @param stationNames A vector of the names/IDs of specific stations in the
+#'        table.
+#' @return A PWStations object representing the result of applying the
+#'         specified criteria to the original object.
+#' @seealso \code{\link{getStations}} for a method that will generate an object.
+#'          See \code{\link{loadWeatherData}} to load weather data for the
+#'          selected PWS stations.
 #' @export makeStationSubtable
 #' @examples
 #' \dontrun{
 #' charlotteStations <- getStations(latlong = c(35.229, -80.8433), radius = 10)
-#' makeStationSubtable(charlotteStations, newRadius = 5) # Decrease radius to 5 miles
+#' makeStationSubtable(charlotteStations, newRadius = 5) # Decrease radius to
+#'                                                       # 5 miles
 #' makeStationSubtable(charlotteStations, numberToKeep = 3) # Keep 3 closest
-#' makeStationSubtable(charlotteStations, numberToKeep = 3, nearest = FALSE) # Keep 3 farthest
-#' makeStationsSubtable(charlotteStations, stationNames = c("KNCCHARL71", "KNCCHARL83"))
+#' # Keep 3 farthest
+#' makeStationSubtable(charlotteStations, numberToKeep = 3, nearest = FALSE)
+#' makeStationsSubtable(charlotteStations,
+#'                      stationNames = c("KNCCHARL71", "KNCCHARL83"))
 #' }
-makeStationSubtable <- function(pwStations, newRadius = NA, numberToKeep = NA, nearest = TRUE, stationNames = NA) {
+makeStationSubtable <- function(pwStations, newRadius = NA, numberToKeep = NA,
+                                nearest = TRUE, stationNames = NA) {
   if (all(is.na(newRadius),
-          is.na(numberToKeep),
-          is.na(stationNames))) {
+       is.na(numberToKeep),
+       is.na(stationNames))) {
     stop("Please specify a filter criteria.")
   }
 
@@ -45,22 +60,27 @@ makeStationSubtable <- function(pwStations, newRadius = NA, numberToKeep = NA, n
       stop("Please specify a positive numeric value for newRadius.")
     }
 
-    returnStations <- pwStations$stations[pwStations$stations$distance_mi <= newRadius,]
+    returnStations <-
+       pwStations$stations[pwStations$stations$distance_mi <= newRadius,]
     returnRadius <- newRadius
   } else if (!is.na(numberToKeep)) {
-    if (!is.numeric(numberToKeep) || as.integer(numberToKeep) < 1 || as.integer(numberToKeep) >= nrow(pwStations$stations)) {
-      stop("Please specify a numberToKeep of at least 1 and less than the number of stations provided.")
-    }
+      if (!is.numeric(numberToKeep) || as.integer(numberToKeep) < 1 ||
+           as.integer(numberToKeep) >= nrow(pwStations$stations)) {
+        stop(paste0("Please specify a numberToKeep of at least 1 and less than",
+                  "the number of stations provided."))
+      }
 
-    returnStations <- head(pwStations$stations[order(pwStations$stations$distance_mi,
-                                                     decreasing = !nearest), ],
-                           n = as.integer(numberToKeep))
+      returnStations <- head(pwStations$stations[order(
+                                     pwStations$stations$distance_mi,
+                                     decreasing = !nearest), ],
+                             n = as.integer(numberToKeep))
   } else {
     if (!is.character(stationNames)) {
       stop("Please specify a character vector of station names.")
     }
 
-    returnStations <- pwStations$stations[pwStations$stations$id %in% stationNames, ]
+    returnStations <-
+           pwStations$stations[pwStations$stations$id %in% stationNames, ]
   }
 
   # Copy the original

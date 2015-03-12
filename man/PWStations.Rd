@@ -17,7 +17,9 @@ are stored in a stations data table.
 Maruthi Ram Nadakuduru, Jared Casale
 }
 \seealso{
-\code{\link{getStations}} for a method that will generate an object. See \code{\link{loadWeatherData}} to load weather data for the selected PWS stations.
+\code{\link{getStations}} for a method that will generate an
+         object. See \code{\link{loadWeatherData}} to load weather
+         data for the selected PWS stations.
 }
 \keyword{PWS,}
 \keyword{Wunderground}

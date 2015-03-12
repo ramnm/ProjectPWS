@@ -10,26 +10,35 @@ loadWeatherData(pwStations, startDate, endDate = NA,
 \arguments{
 \item{pwStations}{PWStation object containing the stations that require data.}
 
-\item{startDate}{Beginning of time period of interest. Must be a string with format mm/dd/YYYY.}
+\item{startDate}{Beginning of time period of interest. Must be a string with
+format mm/dd/YYYY.}
 
-\item{endDate}{End of time period of interest. If specified, must be a string with format mm/dd/YYYY.}
+\item{endDate}{End of time period of interest. If specified, must be a
+string with format mm/dd/YYYY.}
 
-\item{weatherVars}{Variables to retrieve, must be one of "tempi" (temperature imperial i.e. Fahrenheit), "hum" (humidity)}
+\item{weatherVars}{Variables to retrieve, must be one of "tempi"
+(temperature imperial i.e. Fahrenheit), "hum" (humidity)}
 
-\item{stationLimit}{This restricts to the first stationLimit stations. -1 signals to retrieve all in the table.}
+\item{stationLimit}{This restricts to the first stationLimit stations.
+-1 signals to retrieve all in the table.}
 }
 \value{
-List of data frames, one for each weather station in the original PWStations object. The name of each element is the station's ID.
+List of data frames, one for each weather station in the original
+        PWStations object. The name of each element is the station's ID.
 Note that this is also accessible from the supplied PWStations object.
 }
 \description{
-This function will query the wunderground site and retrieve the weather data for each PW Station, over the specified time period.
+This function will query the wunderground site and retrieve the
+             weather data for each PW Station, over the specified time
+             period.
 }
 \examples{
 \dontrun{
- stations <- getStations(zip = "98107", radius = 2)
- weatherData <- loadWeatherData(stations, startDate = "3/3/2015", stationLimit = 1)
- weatherData2 <- loadWeatherData(stations, startDate = "3/1/2015", endDate = "3/3/2015", stationLimit = 3)
+stations <- getStations(zip = "98107", radius = 2)
+weatherData <- loadWeatherData(stations, startDate = "3/3/2015",
+                               stationLimit = 1)
+weatherData2 <- loadWeatherData(stations, startDate = "3/1/2015",
+                                endDate = "3/3/2015", stationLimit = 3)
 }
 }
 \author{
