@@ -39,7 +39,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
   }
 
   # Get the stations - is it empty?
-  stationsTable <- stations$stations
+  stationsTable <- pwStations$stations
   if (is.na(stationsTable) || nrow(stationsTable) == 0) {
     stop("Need at least one PW Station.")
   }
@@ -87,7 +87,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
 
   # Check endHour, is it specified, is it a valid hour?
   if (is.na(endHour)) {
-    startHour <- 0
+    endHour <- 0
   } else if (!is.numeric(endHour) || endHour < 0 ||
                endHour > 23) {
     stop("endHour must be an integer between 0 and 23.")
@@ -165,8 +165,8 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
         if (length(tableHours) < 24) {
           # Looks like we missed some data at the end
           missingHours <- seq(max(tableHours) + 1, 23)
-          tableHours <- c(tableHours, missingHours)
-          tableConds <- c(tableConds, rep(NA, length(missingHours)))
+          tableHours <<- c(tableHours, missingHours)
+          tableConds <<- c(tableConds, rep(NA, length(missingHours)))
           lapply(weatherVars,
                  function(var) {
                    tableVars[[var]] <<- c(tableVars[[var]],
@@ -184,7 +184,16 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
       }
     }
 
+    errorHandler <- function(context, node, attrs, ...) {
+     if ("type" %in% names(node) && "description" %in% names(node)) {
+       stop("Error from Wunderground API. Type: %s, Description: %s",
+            XML::xmlValue(node[["type"]]),
+            XML::xmlValue(node[["description"]]))
+     }
+    }
+
     c(observation = XML::xmlParserContextFunction(observation),
+     # error = XML::xmlParserContextFunction(errorHandler),
       getWeatherDT = getWeatherDT)
   }
 
@@ -230,16 +239,20 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
     stationCount <<- stationCount + 1
     dayCount <- 1
     daysTotal <- length(days)
-    data.table::rbindlist(lapply(days,
-                                 function(day) {
-                                   dHist <- getDayHistory(
-                                     station,
-                                     day,
-                                     firstDay = (dayCount == 1),
-                                     lastDay = (dayCount == daysTotal))
-                                   dayCount <<- dayCount + 1
-                                   dHist
-                                  }))
+    stationDays <- lapply(days,
+                          function(day) {
+                            print(sprintf("Processing day %d of %d...",
+                                          dayCount,
+                                          daysTotal))
+                            dHist <- getDayHistory(
+                              station,
+                              day,
+                              firstDay = (dayCount == 1),
+                              lastDay = (dayCount == daysTotal))
+                            dayCount <<- dayCount + 1
+                            dHist
+                          })
+    data.table::rbindlist(stationDays)
   })
   names(allStations) <- stationIds
 

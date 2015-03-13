@@ -74,8 +74,22 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
     pwsXML <- XML::xmlTreeParse(finalurl, useInternalNodes = TRUE)
     pwsRoot <- XML::xmlRoot(pwsXML)
     pwsNamespace <- XML::getDefaultNamespace(pwsRoot)
+
+    # Check for errors
+    errorNodes <- XML::getNodeSet(pwsRoot,
+                                  "/response/error",
+                                  pwsNamespace)
+
+    if (length(errorNodes) > 0) {
+      errorList <- XML::xmlToList(errorNodes[[1]])
+      stop(sprintf("Error from Wunderground API. Type: %s, Description: %s",
+                   errorList$type,
+                   errorList$description))
+    }
+
+    # Get the stations
     pwsPath <- paste0("/response/location/nearby_weather_stations/pws",
-    sprintf("/station[distance_mi<=%d]", pwstationObj$radius))
+                      sprintf("/station[distance_mi<=%d]", pwstationObj$radius))
 
     stationNodes <- XML::getNodeSet(pwsRoot, pwsPath, pwsNamespace)
 
