@@ -83,7 +83,7 @@ makeStationSubtable <- function(pwStations, newRadius = NA, numberToKeep = NA,
            pwStations$stations[pwStations$stations$id %in% stationNames, ]
   }
 
- # Copy the original
+  # Copy the original
   returnObj <- PWStations$new(latlong = pwStations$latlong,
                               zip = pwStations$zip,
                               state = pwStations$state,
