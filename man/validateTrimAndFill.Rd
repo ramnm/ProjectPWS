@@ -28,7 +28,7 @@ Takes a PWStation object and loops through all of its
 \item  Trim each table so that any columns with less than 2 data points
        are removed.
 \item  Fill in missing values by taking the mean of 5 imputations using
-       the \code{\link[Amelia]{amelia}} package.
+       the \code{\link[Amelia]{amelia}} function.
 }
 }
 \examples{
