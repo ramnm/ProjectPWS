@@ -1,10 +1,7 @@
-##
-## Author - Maruthi Ram Nadakuduru
-## Description - This function saves the PWS table created by user in his
-## working directory
-##
-savePWSTable <- function(pwsTable,fileName){
-  fileName <- paste0("~/",fileName,".rda")
-  print(fileName)
-  save(pwsTable, file=fileName)
+#' Save PWS Table
+#' @author Maruthi Ram Nadakuduru
+#' @description This function saves the PWS table created by user in the specified location
+#' @export
+savePWSTable <- function(pwsTable, fileName) {
+  saveRDS(pwsTable, file = fileName)
 }
