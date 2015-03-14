@@ -175,7 +175,8 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
         }
         weatherDT <- data.table::data.table(day = day,
                                             hour = tableHours)
-        weatherDT <- cbind(weatherDT, as.data.frame(tableVars))
+        weatherDT <- cbind(weatherDT,
+                           data.table::data.table(as.data.frame(tableVars)))
         weatherDT$conds <- tableConds
 
         setNames(weatherDT, c("day", "hour", weatherVars, "conds"))
