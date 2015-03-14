@@ -51,6 +51,7 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
                                  country = country,
                                  city = city,
                                  radius = radius)
+
   # Retrieve the API key from environment variable
   usertoken <- Sys.getenv("WUNDERGROUND_TOKEN")
   if (is.na(usertoken)) {
@@ -61,6 +62,7 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
 
   # This helper function assumes that the returned page contains the
   # nearby_weather_stations node
+
   # Use this to loop through a set of cities for a Country or State
   getAndParseStationData <- function(queryArg) {
     finalurl <- URLencode(paste0(baseurl,
@@ -72,12 +74,26 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
     pwsXML <- XML::xmlTreeParse(finalurl, useInternalNodes = TRUE)
     pwsRoot <- XML::xmlRoot(pwsXML)
     pwsNamespace <- XML::getDefaultNamespace(pwsRoot)
+
+    # Check for errors
+    errorNodes <- XML::getNodeSet(pwsRoot,
+                                  "/response/error",
+                                  pwsNamespace)
+
+    if (length(errorNodes) > 0) {
+      errorList <- XML::xmlToList(errorNodes[[1]])
+      stop(sprintf("Error from Wunderground API. Type: %s, Description: %s",
+                   errorList$type,
+                   errorList$description))
+    }
+
+    # Get the stations
     pwsPath <- paste0("/response/location/nearby_weather_stations/pws",
-    sprintf("/station[distance_mi<=%d]", pwstationObj$radius))
+                      sprintf("/station[distance_mi<=%d]", pwstationObj$radius))
 
     stationNodes <- XML::getNodeSet(pwsRoot, pwsPath, pwsNamespace)
 
-  # Create empty vectors
+    # Create empty vectors
     ids <- character()
     cities <- character()
     states <- character()
@@ -86,13 +102,14 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
     longs <- numeric()
     distance_mis <- numeric()
 
-  # Loop over each station node
+    # Loop over each station node
     stationList <- lapply(stationNodes, function(stationNode) {
       xmlList <- XML::xmlToList(stationNode)
 
       list(id = xmlList$id,
            city = xmlList$city,
-           state = xmlList$state,
+           state = ifelse(is.null(xmlList$state), "NA",
+                          xmlList$state),
            country = xmlList$country,
            lat = as.numeric(xmlList$lat),
            lon = as.numeric(xmlList$lon),
@@ -102,10 +119,10 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
     data.table::rbindlist(stationList)
   }
 
- # If the query is for a whole state or country, then we need to query all
- # cities in that area
+  # If the query is for a whole state or country, then we need to query all
+  # cities in that area
   if (!is.na(state) || !is.na(country) && is.na(city)) {
- # Need to request the region then each city returned for that region
+    # Need to request the region then each city returned for that region
     areaUrl <- URLencode(paste0(baseurl,
                                 usertoken,
                                 "/geolookup/q/",
@@ -132,9 +149,9 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
     })
 
     pwstationObj$stations <- data.table::rbindlist(cityTables)
-    } else {
-      pwstationObj$stations <- getAndParseStationData(pwstationObj$queryArg)
-    }
+  } else {
+    pwstationObj$stations <- getAndParseStationData(pwstationObj$queryArg)
+  }
 
   pwstationObj
 }
