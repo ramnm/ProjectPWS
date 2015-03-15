@@ -1,6 +1,5 @@
 suppressMessages(library(shiny))
 library(leaflet)
-
 shinyUI(
   navbarPage("ProjectPWS",id="pwsNav",
     tabPanel("Stations Map",
@@ -24,19 +23,21 @@ shinyUI(
           absolutePanel(id = "controls", class = "panel panel-default",
             fixed = TRUE, draggable = FALSE, top = 60,
             left = "auto", right = 20, bottom = "auto",
-            width = 330, height = "auto", h2("PWS Selection Criteria"),
+            width = 330, height = "auto", h3("Station Selection Criteria"),
             selectInput("input_type", "Input type",
-                 c("Zip Code", "State Code", "Country Code", "Local File")),
+                 c("Zip Code", "State Code", "Country Code",
+                   "Local File Load")),
             conditionalPanel("input.input_type == 'Zip Code'",
               textInput("zipcode", label = "Zip Code")),
             conditionalPanel("input.input_type == 'Zip Code'",
-              sliderInput("range",label = "Range",min=0,max=40,value=3)),
+              sliderInput("range",label = "Range in Miles",
+                          min=0,max=25,value=3)),
             conditionalPanel("input.input_type == 'State Code'",
               selectInput("stcode","State Code",stateCd$US.State)),
             conditionalPanel("input.input_type == 'Country Code'",
               selectInput("country","Country Code",countryCd$Country)),
             conditionalPanel("input.input_type == 'Local File Load'",
-              fileInput("file",label = "File")),
+              fileInput("fileStn",label = "Load Stations File")),
             actionButton("getStations",label="Get Stations")
           ),
           tags$div(id="cite",
@@ -45,7 +46,17 @@ shinyUI(
       )
     ),
 ##
-    tabPanel("Data Table",dataTableOutput("stnTable")),
+    tabPanel("Data Table",
+             fluidRow(
+               column(8,conditionalPanel("input.getStations > 0",
+                                         plotOutput("stnPlot"))),
+               column(4,conditionalPanel("input.getStations > 0 &
+                                        input.input_type != 'Local File Load'",
+                                         downloadButton('saveTable',
+                                                        'Save Data Locally')))
+             ),
+             fluidRow(hr(),
+               dataTableOutput("stnTable"))),
 ##
     tabPanel("Weather Map",
       div(class="outer",
@@ -68,11 +79,11 @@ shinyUI(
           absolutePanel(id = "controls", class = "panel panel-default",
             fixed = TRUE, draggable = FALSE, top = 60,
             left = "auto", right = 20, bottom = "auto",
-            width = 330, height = "auto", h2("Weather Selection Criteria"),
+            width = 330, height = "auto", h3("Weather Selection Criteria"),
             fluidRow(
               column(7,dateInput("stDate",label="Start Date",
                                  value="2015-02-01")),
-              column(5,selectInput("stTime",label="Time",
+              column(5,selectInput("stTime",label="Start Time",
                                    c("01:00AM","02:00AM","03:00AM","04:00AM",
                                      "05:00AM","06:00AM","07:00AM","08:00AM",
                                      "09:00AM","10:00AM","11:00AM","12:00PM",
@@ -82,7 +93,7 @@ shinyUI(
             fluidRow(
               column(7,dateInput("endDate",label="End Date",
                                  value="2015-02-01")),
-              column(5,selectInput("endTime",label="Time",
+              column(5,selectInput("endTime",label="End Time",
                                  c("01:00AM","02:00AM","03:00AM","04:00AM",
                                    "05:00AM","06:00AM","07:00AM","08:00AM",
                                    "09:00AM","10:00AM","11:00AM","12:00PM",
@@ -96,7 +107,10 @@ shinyUI(
                                                   "Wind Speed"=3,
                                                   "Pressure"=4),selected=1))),
             fluidRow(
-              column(12,actionButton("getWeather",label="Get Weather")))
+              column(12,actionButton("getWeather",label="Get Weather"))),
+            fluidRow(
+              column(12,conditionalPanel("input.getWeather > 0",hr(),
+                        uiOutput("weatherRange"))))
           ),
           tags$div(id="cite",
            'Data compiled from ',

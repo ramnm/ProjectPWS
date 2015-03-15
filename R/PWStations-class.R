@@ -5,6 +5,7 @@
 #' the query used (i.e. if zip is set, a zip lookup was performed) and the resulting stations
 #' are stored in a stations data table.
 #' @importFrom R6 R6Class
+#' @export PWStations
 #' @format An \code{\link{R6Class}} generator object
 #' @keywords PWS, Wunderground
 #' @seealso \code{\link{getStations}} for a method that will generate an
@@ -121,6 +122,12 @@ PWStations <- R6::R6Class("PWStations",
     self$city <- city
     self$radius <- radius
     self$queryArg <- queryArg
+  },
+  plotStations = function (){
+    stn <- self$stations
+    hist(stn$distance_mi, main = "Histogram of Stations",
+         xlab = "Distance in Miles", ylab = "No. of Stations",
+         col = "00CCF0")
   }
   )
 )

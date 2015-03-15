@@ -33,7 +33,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
   }
 
  # Get the stations - is it empty?
-  stationsTable <- stations$stations
+  stationsTable <- pwStations$stations
   if (is.na(stationsTable) || nrow(stationsTable) == 0) {
     stop("Need at least one PW Station.")
   }
@@ -178,5 +178,5 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
 
   pwStations$weatherData <- allStations
 
-  pwStations$weatherData
+  pwStations
 }
