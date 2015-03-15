@@ -79,7 +79,7 @@ PWStations <- R6::R6Class("PWStations",
                                 }
 
                                 if (!is.character(state) || nchar(state) != 2) {
-                                  stop("Please specify state as a length 2 chracter string.")
+                                  stop("Please specify state as a length 2 character string.")
                                 }
 
                                 queryArg <- state
