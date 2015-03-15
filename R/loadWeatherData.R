@@ -194,7 +194,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
     }
 
     c(observation = XML::xmlParserContextFunction(observation),
-     # error = XML::xmlParserContextFunction(errorHandler),
+      error = XML::xmlParserContextFunction(errorHandler),
       getWeatherDT = getWeatherDT)
   }
 
@@ -259,5 +259,5 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
 
   pwStations$weatherData <- allStations
 
-  pwStations$weatherData
+  pwStations
 }

@@ -38,19 +38,19 @@ test_that("invalid input results in error", {
 # We limit to a single station, over two days,
 # since the Wunderground API severely limits
 # calls for free access.
-weatherData <-
-  loadWeatherData(latLongStations,
-                  startDate = "3/3/2015",
-                  endDate = "3/4/2015",
-                  startHour = 3,
-                  endHour = 12,
-                  stationLimit = 1)
+
+loadWeatherData(latLongStations,
+                startDate = "3/3/2015",
+                endDate = "3/4/2015",
+                startHour = 3,
+                endHour = 12,
+                stationLimit = 1)
+
+weatherData <- latLongStations$weatherData
 
 test_that("weather data is correctly loaded", {
   expect_false(is.na(latLongStations$weatherData))
   expect_true(length(latLongStations$weatherData) == 1)
-  expect_identical(weatherData,
-                   latLongStations$weatherData)
   expect_true(length(unique(weatherData[[1]]$day)) == 2)
   expect_true(nrow(weatherData[[1]]) == 34)
   expect_true(ncol(weatherData[[1]]) == 7)
