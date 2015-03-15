@@ -33,7 +33,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
   }
 
   # Get the stations - is it empty?
-  stationsTable <- stations$stations
+  stationsTable <- pwStations$stations
   if (is.na(stationsTable) || nrow(stationsTable) == 0) {
     stop("Need at least one PW Station.")
   }
@@ -69,24 +69,24 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
 
   days <- seq(startDate, endDate, by="days")
 
- # Match weatherVars
+  # Match weatherVars
   weatherVars <- match.arg(weatherVars, several.ok = TRUE)
 
- # Go and retrieve!
+  # Go and retrieve!
 
- # For the Wunderground API, we are limited to a call per station, per day
- # We create a SAX handler that will parse a single day of history data for a
- # single station. It saves the first value at each hour for that day and
- # provides a hook to retrieve a data table.
+  # For the Wunderground API, we are limited to a call per station, per day
+  # We create a SAX handler that will parse a single day of history data for a
+  # single station. It saves the first value at each hour for that day and
+  # provides a hook to retrieve a data table.
 
- # SAX Handler that will deal with each observation
+  # SAX Handler that will deal with each observation
   observationHandler = function(day) {
   tableHours <- numeric()
   tableVars <- list()
- # Create an empty vector for each var we are saving
+  # Create an empty vector for each var we are saving
   lapply(weatherVars, function(var) tableVars[[var]] <- numeric())
 
- # Keep the first observation for each hour, also check if we skip an hour
+  # Keep the first observation for each hour, also check if we skip an hour
   nextHour <- 0
 
   observation <- function(context, node, attrs, ...) {
@@ -94,20 +94,20 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
 
     if (hour >= nextHour) {
       if (hour > nextHour) {
- # This means we skipped an hour/s
- # Create a sequence of missing hours
+        # This means we skipped an hour/s
+        # Create a sequence of missing hours
         hoursMissing <- seq(nextHour, hour - 1)
 
- # Fill these in
+        # Fill these in
         tableHours <<- c(tableHours, hoursMissing)
 
- # Add NA values for each missing datapoint
+        # Add NA values for each missing datapoint
         lapply(weatherVars, function(var)
                                  tableVars[[var]] <<- c(tableVars[[var]],
         rep(NA, length(hoursMissing))))
       }
 
- # We are at the first point of the next hour
+      # We are at the first point of the next hour
       nextHour <<- hour + 1
       lapply(weatherVars, function(var)
                                tableVars[[var]] <<- c(tableVars[[var]],
@@ -119,7 +119,7 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
   getWeatherDT <- function() {
     if (length(tableHours) > 0) {
       if (length(tableHours) < 24) {
- # Looks like we missed some data at the end
+        # Looks like we missed some data at the end
         missingHours <- seq(max(tableHours) + 1, 23)
         tableHours <- c(tableHours, missingHours)
         lapply(weatherVars, function(var)
@@ -160,11 +160,11 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
     obsHandler$getWeatherDT()
   }
 
- # This call is essentially for each station id, for each day, get the weather
- # data then combine into a single data table for each station and into a list
- # of data tables, one for each station.
- # print(sprintf("There are %d stations to query over %d days.
- # This may take a while.", length(stationIds), length(days)))
+  # This call is essentially for each station id, for each day, get the weather
+  # data then combine into a single data table for each station and into a list
+  # of data tables, one for each station.
+  # print(sprintf("There are %d stations to query over %d days.
+  # This may take a while.", length(stationIds), length(days)))
   stationCount <- 1
   stationsTotal <- length(stationIds)
   allStations <- lapply(stationIds, function(station) {
@@ -178,5 +178,5 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
 
   pwStations$weatherData <- allStations
 
-  pwStations$weatherData
+  pwStations
 }
