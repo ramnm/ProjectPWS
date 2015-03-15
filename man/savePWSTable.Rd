@@ -6,8 +6,13 @@
 \usage{
 savePWSTable(pwsTable, fileName)
 }
+\arguments{
+\item{pwsTable}{The PWStation object to save.}
+
+\item{fileName}{The location where it is to be saved.}
+}
 \description{
-This function saves the PWS table created by user in the specified location
+This function saves the PWS table created by user in the specified location.
 }
 \author{
 Maruthi Ram Nadakuduru

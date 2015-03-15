@@ -6,6 +6,9 @@
 \usage{
 readPWSTable(fileName)
 }
+\arguments{
+\item{fileName}{Name of file where saved PWStation object exists.}
+}
 \description{
 This function reads a saved PWS table created by user from
              the specified location.
