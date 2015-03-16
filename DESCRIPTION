@@ -1,11 +1,14 @@
 Package: ProjectPWS
-Title: STAT290 Class Project on Personal Weather Station Data, using RShiny.
+Title: STAT290 Class Project on Personal Weather Station Data.
 Version: 0.1
 Date: 2015-02-18
-Authors: mailtomaruthi@gmail.com jared.casale@gmail.com
-Maintainers: mailtomaruthi@gmail.com jared.casale@gmail.com
+Author: Maruthi Ram Nadakuduru <mailtomaruthi@gmail.com> Jared Casale <jared.casale@gmail.com>
+Maintainer: Maruthi Ram Nadakuduru <mailtomaruthi@gmail.com> Jared Casale <jared.casale@gmail.com>
 Description: Personal Weather Station Data - Class Project
 Depends: R (>= 3.1.2)
-Imports: XML, shiny, data.table
-License: MIT
+Imports: XML, data.table, Amelia, R6
+Suggests: shiny, testthat,
+    knitr
+License: MIT + file LICENSE
 LazyData: true
+VignetteBuilder: knitr

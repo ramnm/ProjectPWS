@@ -4,8 +4,9 @@
 \alias{loadWeatherData}
 \title{Load PWS Weather Data}
 \usage{
-loadWeatherData(pwStations, startDate, endDate = NA,
-  weatherVars = c("tempi", "hum"), stationLimit = -1L)
+loadWeatherData(pwStations, startDate, endDate = NA, startHour = NA,
+  endHour = NA, weatherVars = c("tempi", "hum", "wspdi", "pressure"),
+  stationLimit = -1L)
 }
 \arguments{
 \item{pwStations}{PWStation object containing the stations that require data.}
@@ -16,8 +17,14 @@ format mm/dd/YYYY.}
 \item{endDate}{End of time period of interest. If specified, must be a
 string with format mm/dd/YYYY.}
 
+\item{startHour}{First hour of period of interest. Must be numeric between 0 and 23.}
+
+\item{endHour}{Last hour of period of interest. Must be numeric between 0 and 23.}
+
 \item{weatherVars}{Variables to retrieve, must be one of "tempi"
-(temperature imperial i.e. Fahrenheit), "hum" (humidity)}
+(temperature imperial i.e. Fahrenheit), "hum" (humidity),
+"wspid" (Weather speed imperial), "pressure". Plain-text
+weather conditions ("conds") will also be extracted.}
 
 \item{stationLimit}{This restricts to the first stationLimit stations.
 -1 signals to retrieve all in the table.}
@@ -36,6 +43,8 @@ This function will query the wunderground site and retrieve the
 \dontrun{
 stations <- getStations(zip = "98107", radius = 2)
 weatherData <- loadWeatherData(stations, startDate = "3/3/2015",
+                               startHour = 9,
+                               endHour = 5,
                                stationLimit = 1)
 weatherData2 <- loadWeatherData(stations, startDate = "3/1/2015",
                                 endDate = "3/3/2015", stationLimit = 3)

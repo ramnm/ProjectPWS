@@ -3,6 +3,5 @@
 #' @description This is a test hook to start the shiny app
 #' @export
 pwsWebapp <- function() {
-  data(sysdata,envir=environment())
-  shiny::runApp(system.file("shiny", package="ProjectPWS"))
+ shiny::runApp(system.file("shiny", package="ProjectPWS"))
 }
