@@ -107,7 +107,7 @@ weatherData2 <- loadWeatherData(stations,
 ## Requirement 4: Visualizing the data
 
 ## Requirement 5: Approximating missing data
-Missing data did not seem to be a huge issue, since we are limiting to hourly intervals and PWS generally seemed to provide data for each hour that we queried. However we did build a function called validateTrimAndFill which does three things:
+Missing data did not seem to be a huge issue since we are limiting to hourly intervals and PWS generally seemed to provide data for each hour that we queried. However we did build a function called validateTrimAndFill which does three things:
 
 1. Check all values and determine if they are within a (generously) reasonable range. If they are not, they will be replaced with an NA.
 2. Trim each table so that any columns with less than 2 data points are removed.
