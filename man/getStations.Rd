@@ -52,7 +52,7 @@ latLongStations <- getStations(latlong = c(35.229, -80.8433), radius = 2)
 # Charlotte
 zipStations <- getStations(zip = "90210", radius = 10)
 berlinStations <- getStations(country = "Germany", city = "Berlin")
-cityStations <- getStations(state = "Oregon", city = "Portand", radius = 3)
+cityStations <- getStations(state = "OR", city = "Portand", radius = 3)
 countryStations <- getStations(country = "Spain")
 }
 }

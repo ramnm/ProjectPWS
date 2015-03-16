@@ -43,6 +43,8 @@ This function will query the wunderground site and retrieve the
 \dontrun{
 stations <- getStations(zip = "98107", radius = 2)
 weatherData <- loadWeatherData(stations, startDate = "3/3/2015",
+                               startHour = 9,
+                               endHour = 5
                                stationLimit = 1)
 weatherData2 <- loadWeatherData(stations, startDate = "3/1/2015",
                                 endDate = "3/3/2015", stationLimit = 3)

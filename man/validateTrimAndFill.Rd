@@ -34,7 +34,7 @@ Takes a PWStation object and loops through all of its
 \examples{
 \dontrun{
 charlotteStations <- getStations(latlong = c(35.229, -80.8433), radius = 10)
-charlotteStations <- makeStationsSubtable(charlotteStations,
+charlotteStations <- makeStationSubtable(charlotteStations,
                        stationNames = c("KNCCHARL71", "KNCCHARL83"))
 loadWeatherData(charlotteStations, startDate = format(Sys.Date(), "\%m/\%d/\%Y"))
 validateTrimAndFill(charlotteStations, stopAfterValidation = TRUE)

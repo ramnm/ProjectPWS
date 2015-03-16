@@ -7,6 +7,8 @@ Maintainer: Maruthi Ram Nadakuduru <mailtomaruthi@gmail.com> Jared Casale <jared
 Description: Personal Weather Station Data - Class Project
 Depends: R (>= 3.1.2)
 Imports: XML, data.table, Amelia, R6
-Suggests: shiny, testthat
+Suggests: shiny, testthat,
+    knitr
 License: MIT + file LICENSE
 LazyData: true
+VignetteBuilder: knitr
