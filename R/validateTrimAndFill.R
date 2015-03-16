@@ -47,15 +47,16 @@ validateTrimAndFill <- function(pwStations,
   }
 
   # Checks values are within a certain range
+  # Range is specified here:
+  weatherVars <- c("tempi", "hum", "wspdi", "pressure", "conds")
+  validationTable <- data.frame(
+    varName = weatherVars,
+    canValidate = c(TRUE, TRUE, TRUE, TRUE, FALSE),
+    minValue = c(-130, 0, 0, 20, NA),
+    maxValue = c(135, 100, 253, 33, NA)) #Deg. F, Relative humidity, Miles per hour, Inches of Mercury
+
   # Fills in NA where values are outside the range
   validateAndFill <- function(weatherData) {
-    weatherVars <- c("tempi", "hum", "wspdi", "pressure", "conds")
-    validationTable <- data.frame(
-      varName = weatherVars,
-      canValidate = c(TRUE, TRUE, TRUE, TRUE, FALSE),
-      minValue = c(-130, 0, 0, 20, NA),
-      maxValue = c(135, 100, 253, 33, NA)) #Deg. F, Relative humidity, Miles per hour, Inches of Mercury
-
     lapply(weatherVars, function(col) {
       valRow <- validationTable[validationTable$varName == col, ]
       if (valRow$canValidate) {
@@ -110,12 +111,13 @@ validateTrimAndFill <- function(pwStations,
 
         # Any missing values?
         if (any(is.na(toImpute))) {
+          # Create a sequence so that Amelia has
+          # some data point to use (the time series of hours essentially)
           toImpute$ts <- seq_len(nrow(toImpute))
 
           a.out <- Amelia::amelia(toImpute,
                                   m = 5,
-                                  ts = "ts",
-                                  p2s = 0)
+                                  p2s = 1)
 
           # This method is potentially statistically poor
           # The imputations should be kept separately, or
@@ -128,7 +130,18 @@ validateTrimAndFill <- function(pwStations,
                                     imputedData[[colName]]
                                   })
 
-            rowMeans(as.data.frame(imputedCols))
+            collapsedCol <- rowMeans(as.data.frame(imputedCols))
+
+            # Note that Amelia may estimate something outside
+            # the range of possible values
+            # Trim the edges
+            valRow <- validationTable[validationTable$varName == colName, ]
+            minColVal <- valRow$minValue
+            maxColVal <- valRow$maxValue
+            collapsedCol[collapsedCol < minColVal] <- minColVal
+            collapsedCol[collapsedCol > maxColVal] <- maxColVal
+
+            collapsedCol
           })
           names(collapsedCols) <- colsToImpute
 
@@ -136,6 +149,7 @@ validateTrimAndFill <- function(pwStations,
             weatherData[[col]] <<- collapsedCols[[col]]
           })
         }
+
         weatherData
       }
 
