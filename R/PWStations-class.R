@@ -127,7 +127,7 @@ PWStations <- R6::R6Class("PWStations",
     stn <- self$stations
     hist(stn$distance_mi, main = "Histogram of Stations",
          xlab = "Distance in Miles", ylab = "No. of Stations",
-         col = "00CCF0")
+         col = 'dark green')
   }
   )
 )

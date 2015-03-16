@@ -13,6 +13,8 @@ timesRef <- c("01:00AM","02:00AM","03:00AM","04:00AM",
               "05:00PM","06:00PM","07:00PM","08:00PM",
               "09:00PM","10:00PM","11:00PM","12:00PM")
 wRange <- FALSE
+# Validation function for the loaded File option
+pwsObject <- list()
 #
 shinyServer(function(input,output,session){
 #
@@ -25,37 +27,26 @@ shinyServer(function(input,output,session){
       print("inside loadStations")
       sMap$clearMarkers()
       sMap$clearShapes()
-      isolate({
-        if (input$input_type == "Local File Load") {
-          inFile <- list()
+#      isolate({
+        if (isolate(input$input_type) == "Local File Load") {
           inFile <- input$fileStn
-          validate (
-            need(!is.null(inFile),"'\nPlease select a local stations file")
+          err <- try(pwsObject <- readRDS(inFile$datapath))
+          validate(
+            need(class(err)[1] == "PWStations","'\nPlease select a valid file")
           )
-          print(inFile)
-          err <- FALSE
-          pwsObject <- data.frame()
-          tryCatch(pwsObject <<- readRDS(inFile$datapath),
-                   error = function(e) {err <<- TRUE}
-          )
-          if(err) stop("'\nPlease load a valid file")
-#         validate (
-#           need((!err) & (identical(class(pwsObject),c("PWStations","R6"))) &
-#                 (nrow(pwsObject$stations) > 0),"'\nPlease load a valid file")
-#         )
           pwsObject
         } else {
-          if (input$input_type == "Zip Code"){
+          if (isolate(input$input_type) == "Zip Code"){
             validate(
-              need((input$input_type == "Zip Code") &
+              need((isolate(input$input_type) == "Zip Code") &
                    (input$zipcode%in%zipcodes$zip),
                    "'\nPlease enter a valid zip code")
           )}
-          a <- input$zipcode
-          b <- input$range
-          c <- stateCd[stateCd$US.State==input$stcode,2]
-          d <- countryCd[countryCd$Country==input$country,2]
-          switch(input$input_type,
+          a <- isolate(input$zipcode)
+          b <- isolate(input$range)
+          c <- stateCd[stateCd$US.State==isolate(input$stcode),2]
+          d <- countryCd[countryCd$Country==isolate(input$country),2]
+          switch(isolate(input$input_type),
                  "Zip Code" = c <- d <- NA,
                  "State Code" = a <- b <- d <- NA,
                  "Country Code" = a <- b <- c <- NA)
@@ -64,7 +55,7 @@ shinyServer(function(input,output,session){
                                   state = c,
                                   country = d)
         }
-      })
+#      })
     }
   })
 #
@@ -100,6 +91,7 @@ shinyServer(function(input,output,session){
     if(input$getStations > 0 ){
       print("in station map")
       obj <<- buildStn()
+      print("came back from load stations")
       stnTable <- obj$stations
       pins <<- data.frame(lon=as.numeric(stnTable$lon),
                          lat=as.numeric(stnTable$lat),
@@ -148,6 +140,23 @@ shinyServer(function(input,output,session){
     }
   })
 #
+  output$weatherLegend <- renderImage({
+    if(input$getWeather > 0){
+      print("in weather legend")
+      imageName <- switch(isolate(input$wParm),
+                          "1" = "tempLegend.png",
+                          "2" = "humidLegend.png")
+#                  "Wind Speed" = "windS",
+#                  "Pressure" = "press")
+      print(imageName)
+      print(isolate(input$wParm))
+      fileName <- normalizePath(file.path('www',imageName),
+                                winslash="\\")
+      print(fileName)
+      list(src = fileName)
+    }
+  })
+#
   output$weatherRange <- renderUI({
     if(input$getWeather > 0){
       if(!wRange) return()
@@ -186,7 +195,7 @@ shinyServer(function(input,output,session){
     if(is.null(event)) return()
     wMap$clearPopups()
     isolate({
-      parm <- switch(input$wParm,
+      parm <- switch(isolate(input$wParm),
                         "1" = "Temperature:",
                         "2" = "Humidity:",
                         "3" = "Wind Speed:",
@@ -214,7 +223,6 @@ shinyServer(function(input,output,session){
       timeW <- which(timesRef==timeW)
 #
       wTable <- obj$weatherData
-      print(wTable)
       wPins <<- sapply(wTable,function(x){
                  a <- which(x$day == dateW & x$hour == as.character(timeW))
                  if (a == 0) {
@@ -230,15 +238,17 @@ shinyServer(function(input,output,session){
 #                       "4" = presColors)
       wMap$fitBounds(min(pins$lat),min(pins$lon),max(pins$lat),max(pins$lon))
       for(i in 1:nrow(pins)){
-        wMap$addCircleMarker(lat = pins$lat[i], lng = pins$lon[i],
-                             radius = 10,
-                             layerId = pins$id[i],
-                             options = list(color='black',
-                                            weight=5,
-                                            fillColor=
+        if(!is.null(wPins[i])){
+          wMap$addCircleMarker(lat = pins$lat[i], lng = pins$lon[i],
+                               radius = 10,
+                               layerId = pins$id[i],
+                               options = list(color='black',
+                                              weight=5,
+                                              fillColor=
                                               colors[(colors$from <= wPins[i] &
                                               colors$to > wPins[i]),3],
-                                            fillOpacity = 0.5))
+                                              fillOpacity = 0.5))
+        }
       }},
       error = function(e) {print(e)}
       )

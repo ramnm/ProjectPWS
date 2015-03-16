@@ -1,5 +1,6 @@
 suppressMessages(library(shiny))
 library(leaflet)
+##
 shinyUI(
   navbarPage("ProjectPWS",id="pwsNav",
     tabPanel("Stations Map",
@@ -110,7 +111,11 @@ shinyUI(
               column(12,actionButton("getWeather",label="Get Weather"))),
             fluidRow(
               column(12,conditionalPanel("input.getWeather > 0",hr(),
-                        uiOutput("weatherRange"))))
+                        uiOutput("weatherRange")))),
+            fluidRow(
+              column(12,conditionalPanel("input.getWeather > 0",
+                        imageOutput("weatherLegend",width = "100%",
+                                    height = "150px"))))
           ),
           tags$div(id="cite",
            'Data compiled from ',
