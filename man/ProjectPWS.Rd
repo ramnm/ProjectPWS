@@ -4,12 +4,14 @@
 \name{ProjectPWS}
 \alias{ProjectPWS}
 \alias{ProjectPWS-package}
-\title{ProjectPWS: A package for extracting weather data from
-personal weather stations (PWS) from the Weather
-Underground API.}
+\title{ProjectPWS}
 \description{
-ProjectPWS: A package for extracting weather data from
+A package for extracting weather data from
 personal weather stations (PWS) from the Weather
 Underground API.
+}
+\examples{
+example(makeStationSubtable)
+example(validateTrimAndFill)
 }
 

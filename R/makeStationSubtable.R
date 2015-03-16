@@ -30,16 +30,20 @@
 #'          selected PWS stations.
 #' @export makeStationSubtable
 #' @examples
-#' \dontrun{
-#' charlotteStations <- getStations(latlong = c(35.229, -80.8433), radius = 10)
-#' makeStationSubtable(charlotteStations, newRadius = 5) # Decrease radius to
-#'                                                       # 5 miles
-#' makeStationSubtable(charlotteStations, numberToKeep = 3) # Keep 3 closest
+#' data(charlotteStations)
+#'
+#' # Decrease radius to 5 miles
+#' makeStationSubtable(charlotteStations, newRadius = 5)$stations
+#'
+#' # Keep 3 closest
+#' makeStationSubtable(charlotteStations, numberToKeep = 3)$stations
+#'
 #' # Keep 3 farthest
-#' makeStationSubtable(charlotteStations, numberToKeep = 3, nearest = FALSE)
-#' makeStationsSubtable(charlotteStations,
-#'                      stationNames = c("KNCCHARL71", "KNCCHARL83"))
-#' }
+#' makeStationSubtable(charlotteStations, numberToKeep = 3, nearest = FALSE)$stations
+#'
+#' # Keep specific stations
+#' makeStationSubtable(charlotteStations,
+#'                      stationNames = c("KNCCHARL71", "KNCCHARL83"))$stations
 makeStationSubtable <- function(pwStations, newRadius = NA, numberToKeep = NA,
                                 nearest = TRUE, stationNames = NA) {
   if (all(is.na(newRadius),

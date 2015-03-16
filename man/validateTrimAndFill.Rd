@@ -32,15 +32,20 @@ Takes a PWStation object and loops through all of its
 }
 }
 \examples{
-\dontrun{
-charlotteStations <- getStations(latlong = c(35.229, -80.8433), radius = 10)
-charlotteStations <- makeStationSubtable(charlotteStations,
+data(charlotteStations)
+
+# Just keep two stations
+lessStations <- makeStationSubtable(charlotteStations,
                        stationNames = c("KNCCHARL71", "KNCCHARL83"))
-loadWeatherData(charlotteStations, startDate = format(Sys.Date(), "\%m/\%d/\%Y"))
+
+# Just validate
 validateTrimAndFill(charlotteStations, stopAfterValidation = TRUE)
+
+# Just validate and trim
 validateTrimAndFill(charlotteStations, stopAfterTrim = TRUE)
+
+# Validate, trim and then fill missing data
 validateTrimAndFill(charlotteStations)
-}
 }
 \author{
 Maruthi Ram Nadakuduru, Jared Casale
