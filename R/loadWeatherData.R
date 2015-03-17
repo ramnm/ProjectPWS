@@ -8,8 +8,10 @@
 #'        format mm/dd/YYYY.
 #' @param endDate End of time period of interest. If specified, must be a
 #'        string with format mm/dd/YYYY.
-#' @param startHour First hour of period of interest. Must be numeric between 0 and 23.
-#' @param endHour Last hour of period of interest. Must be numeric between 0 and 23.
+#' @param startHour First hour of period of interest.
+#'        Must be numeric between 0 and 23.
+#' @param endHour Last hour of period of interest.
+#'        Must be numeric between 0 and 23.
 #' @param weatherVars Variables to retrieve, must be one of "tempi"
 #'        (temperature imperial i.e. Fahrenheit), "hum" (humidity),
 #'        "wspid" (Weather speed imperial), "pressure". Plain-text

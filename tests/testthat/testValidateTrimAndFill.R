@@ -31,7 +31,8 @@ justValidatedData <-
 
 test_that("invalid values are filled with NA", {
   expect_true(sum(is.na(justValidatedData[[1]])) -
-                    sum(is.na(testThatStations$weatherData[[1]])) == 8 + nrow(justValidatedData[[1]]) - 3)
+                    sum(is.na(testThatStations$weatherData[[1]])) ==
+                                          8 + nrow(justValidatedData[[1]]) - 3)
 })
 
 justValAndTrimData <-
