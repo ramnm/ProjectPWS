@@ -19,6 +19,8 @@ shinyServer(function(input,output,session){
   print("in the header part")
   sMap <- createLeafletMap(session,"stnMap")
   wMap <- createLeafletMap(session,"weatherMap")
+  load(system.file("shiny\\www\\shinyData.rda", package = "ProjectPWS"),
+       envir = environment())
 #
   buildStn <- reactive({
     if(input$getStations > 0 ){
