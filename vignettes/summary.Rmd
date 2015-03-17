@@ -21,7 +21,7 @@ The following discusses some known issues/quirks and then each requirement is ad
 
 ## Known issues/quirks
 ### Weather Underground API Key
-Use of the API requires an API key. The free tier pricing provides a key with severe call limiations, namely 10 calls per minute. Note that each geolookup requires a single call and filling a region requires a call to get all cities in that region, followed by a call for each city returned to get the stations. More restrictive is the fact that the weather history (loading weather data) requires a call for each station, for each day in the period. This leads to a LOT of calls in a short period. We have provided a key with the package that will surely be revoked after too much usage. To work around this, the user would need to obtain their own key and set the environment variable "WUNDERGROUND_TOKEN". All functions would then pick up this variable before each new call.
+Use of the API requires an API key. The free tier pricing provides a key with severe call limiations, namely 10 calls per minute. Note that each geolookup requires a single call and filling a region requires a call to get all cities in that region, followed by a call for each city returned to get the stations. More restrictive is the fact that the weather history (loading weather data) requires a call for each station, for each day in the period. This leads to a LOT of calls in a short period. We have provided a key with the package that will surely be revoked after too much usage. To work around this, the user would need to obtain their own key and set the environment variable "WUNDERGROUND_API_KEY". All functions would then pick up this variable before each new call.
 
 
 ### Functions vs R6 methods

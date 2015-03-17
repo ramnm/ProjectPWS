@@ -53,8 +53,8 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
                                  radius = radius)
 
   # Retrieve the API key from environment variable
-  usertoken <- Sys.getenv("WUNDERGROUND_TOKEN")
-  if (is.na(usertoken) || usertoken == "") {
+  apiKey <- Sys.getenv("WUNDERGROUND_API_KEY")
+  if (is.na(apiKey) || apiKey == "") {
     stop(paste0("A WUnderground API key must be specified as the environment",
                 "variable 'WUNDERGROUND_TOKEN'."))
   }
@@ -66,7 +66,7 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
   # Use this to loop through a set of cities for a Country or State
   getAndParseStationData <- function(queryArg) {
     finalurl <- URLencode(paste0(baseurl,
-                                 usertoken,
+                                 apiKey,
                                  "/geolookup/q/",
                                  queryArg,
                                  ".xml"))
@@ -124,7 +124,7 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
   if (!is.na(state) || !is.na(country) && is.na(city)) {
     # Need to request the region then each city returned for that region
     areaUrl <- URLencode(paste0(baseurl,
-                                usertoken,
+                                apiKey,
                                 "/geolookup/q/",
                                 pwstationObj$queryArg,
                                 ".xml"))
