@@ -52,8 +52,8 @@ validateTrimAndFill <- function(pwStations,
   validationTable <- data.frame(
     varName = weatherVars,
     canValidate = c(TRUE, TRUE, TRUE, TRUE, FALSE),
-    minValue = c(-130, 0, 0, 20, NA),
-    maxValue = c(135, 100, 253, 33, NA)) #Deg. F, Relative humidity, Miles per hour, Inches of Mercury
+    minValue = c(-100, 0, 0, 20, NA),
+    maxValue = c(120, 100, 250, 33, NA)) #Deg. F, Relative humidity, Miles per hour, Inches of Mercury
 
   # Fills in NA where values are outside the range
   validateAndFill <- function(weatherData) {
