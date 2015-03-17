@@ -17,9 +17,11 @@ format mm/dd/YYYY.}
 \item{endDate}{End of time period of interest. If specified, must be a
 string with format mm/dd/YYYY.}
 
-\item{startHour}{First hour of period of interest. Must be numeric between 0 and 23.}
+\item{startHour}{First hour of period of interest.
+Must be numeric between 0 and 23.}
 
-\item{endHour}{Last hour of period of interest. Must be numeric between 0 and 23.}
+\item{endHour}{Last hour of period of interest.
+Must be numeric between 0 and 23.}
 
 \item{weatherVars}{Variables to retrieve, must be one of "tempi"
 (temperature imperial i.e. Fahrenheit), "hum" (humidity),
