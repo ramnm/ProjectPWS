@@ -9,27 +9,55 @@ vignette: >
   \usepackage[utf8]{inputenc}
 ---
 
-ProjectPWS is the package written for STAT290 by Jared Casale and Maruthi Ram Nadakuduru. It aimed to fulfil the requirements of the suggested project topic relating to querying the Weather Underground website for PWS data. The basic requirements were roughly as follows:
+ProjectPWS is the package written for STAT290 by Jared Casale and Maruthi Ram 
+Nadakuduru. It aimed to fulfil the requirements of the suggested project topic 
+relating to querying the Weather Underground website for PWS data. The basic 
+requirements were roughly as follows:
 
-1. Provide a means of querying the website to retrieve all PWS near a location (e.g. zipcode + distance) or within a region (e.g. a country name). This should also be persistable.
-2. Store this data in an S4 class (Note: we are using an R6 class for our project). This table should have methods to check validity and extract subtables based on similar queries from 1.
-3. A function to retrieve weather data for these stations, giving a start and end time.
-4. Function(s) to visualize the data, in particular to view patterns of microclimate.
+1. Provide a means of querying the website to retrieve all PWS near a location 
+(e.g. zipcode + distance) or within a region (e.g. a country name). This should 
+also be persistable.
+2. Store this data in an S4 class (Note: we are using an R6 class for our 
+project). This table should have methods to check validity and extract 
+subtables based on similar queries from 1.
+3. A function to retrieve weather data for these stations, giving a start and 
+end time.
+4. Function(s) to visualize the data, in particular to view patterns of 
+microclimate.
 5. A basic computational facility to approximate missing data values.
 
-The following discusses some known issues/quirks and then each requirement is addressed with sample code where appropriate.
+The following discusses some known issues/quirks and then each requirement is 
+addressed with sample code where appropriate.
 
 ## Known issues/quirks
 ### Weather Underground API Key
-Use of the API requires an API key. The free tier pricing provides a key with severe call limiations, namely 10 calls per minute. Note that each geolookup requires a single call and filling a region requires a call to get all cities in that region, followed by a call for each city returned to get the stations. More restrictive is the fact that the weather history (loading weather data) requires a call for each station, for each day in the period. This leads to a LOT of calls in a short period. We have provided a key with the package that will surely be revoked after too much usage. To work around this, the user would need to obtain their own key and set the environment variable "WUNDERGROUND_TOKEN". All functions would then pick up this variable before each new call.
+Use of the API requires an API key. The free tier pricing provides a key with 
+severe call limitations, namely 10 calls per minute. Note that each geolookup 
+requires a single call and filling a region requires a call to get all cities 
+in that region, followed by a call for each city returned to get the stations. 
+More restrictive is the fact that the weather history (loading weather data) 
+requires a call for each station, for each day in the period. This leads to a 
+LOT of calls in a short period. We have provided a key with the package that 
+will surely be revoked after too much usage. To work around this, the user would
+need to obtain their own key and set the environment variable 
+"WUNDERGROUND_API_KEY". All functions would then pick up this variable before 
+each new call. The .onAttach function checks for an environment variable with
+a key, and sets the default if it is missing. .onDetach will clear this variable
+if it is still the default.
 
 
 ### Functions vs R6 methods
-We began writing the project with an S4 class, then moved to R6. Unfortunately, we couldn't find a great way of documenting the class and chose to leave the bulk of our code as separate functions that require one of the R6 objects to be passed to it. The result is no different and the object is still the way to handle state for all of the actions.
+We began writing the project with an S4 class, then moved to R6. Unfortunately, 
+we couldn't find a great way of documenting the class and chose to leave the 
+bulk of our code as separate functions that require one of the R6 objects to be 
+passed to it. The result is no different and the object is still the way to 
+handle state for all of the actions.
 
 ## Requirement 1: Querying for PWS
 
-To load PWS data, we have a method calleed getStations. It queries the WUnderground API to get all PWS meeting the specified criteria. Valid queries for location are as follows:
+To load PWS data, we have a method calleed getStations. It queries the 
+WUnderground API to get all PWS meeting the specified criteria. Valid queries 
+for location are as follows:
 
 * A numeric vector specifying a lat/long pair.
 * A US zipcode character string.
@@ -37,9 +65,17 @@ To load PWS data, we have a method calleed getStations. It queries the WUndergro
 * A US state and city pair.
 * A non-US country name and city pair.
 
-The API limits to PWS within 40km (around 25 miles) of the zipcode and only the first 50 results. An optional numeric mile radius restriction may be supplied, limiting to stations within that distance from the specified location. Anything greater than 24 will be ignored (due to the API limitation).
+The API limits to PWS within 40km (around 25 miles) of the zipcode and only the 
+first 50 results. An optional numeric mile radius restriction may be supplied, 
+limiting to stations within that distance from the specified location. Anything 
+greater than 24 will be ignored (due to the API limitation).
 
-Within the code, we query the API and parse the resulting XML to save the results of the lookup. If a state or country is supplied without a city, then the results of the first lookup give a list of cities within that location. This function then performs a separate query for each of the region/city pairs and concatenates the resulting stations. The following code shows sample queries, but requires internet connectivity (skipped in this document):
+Within the code, we query the API and parse the resulting XML to save the 
+results of the lookup. If a state or country is supplied without a city, then 
+the results of the first lookup give a list of cities within that location. This
+function then performs a separate query for each of the region/city pairs and 
+concatenates the resulting stations. The following code shows sample queries, 
+but requires internet connectivity (skipped in this document):
 
 ```{r, eval=FALSE}
 library(ProjectPWS)
@@ -53,9 +89,19 @@ countryStations <- getStations(country = "Spain")
 ```
 
 ## Requirement 2: Store in a class
-We started out using an S4 class but preferred to use an R6 class. The class PWStations is the container that we load data into. It performs some basic validation of the query used to create the table in the initialize() function and stores the data used for the query. Calling getStations() will associate a data table of PWS stations from the resulting query with the object. Likewise, calling loadWeatherData() will create a list of data tables corresponding to the weather data retrieved for each station in the query. This list is also associated with the original class.
+We started out using an S4 class but preferred to use an R6 class. The class 
+PWStations is the container that we load data into. It performs some basic 
+validation of the query used to create the table in the initialize() function 
+and stores the data used for the query. Calling getStations() will associate a 
+data table of PWS stations from the resulting query with the object. Likewise, 
+calling loadWeatherData() will create a list of data tables corresponding to the 
+weather data retrieved for each station in the query. This list is also 
+associated with the original class.
 
-To extract subtables, we have a function called makeStationSubtable(). It returns a PWStations object with the specified filter applied to the original PWStations. If the original object contained weather data, this will also be filtered to the appropriate stations. Filter options are one of the following:
+To extract subtables, we have a function called makeStationSubtable(). It 
+returns a PWStations object with the specified filter applied to the original 
+PWStations. If the original object contained weather data, this will also be 
+filtered to the appropriate stations. Filter options are one of the following:
 
 1. Reducing the radius of the original query, so that only stations
 2. within the new radius are kept.
@@ -63,7 +109,8 @@ To extract subtables, we have a function called makeStationSubtable(). It return
 4. query location.
 5. Choosing a set of stations by name.
 
-The following code will extract some subtables from a preloaded object (output suppressed):
+The following code will extract some subtables from a preloaded object (output 
+suppressed):
 
 ```{r, eval=FALSE}
 charlotteStations <- getStations(latlong = c(35.229, -80.8433), 
@@ -83,7 +130,21 @@ makeStationsSubtable(charlotteStations,
 ```
 
 ## Requirement 3: Load weather data for a time period
-Loading weather data is achieved through the loadWeatherData() function. It takes a start and end date, as well as a start and end hour (between 0 and 23) and retrieves a set of temperature variables for each PWS in the PWStations object for that time period. The result is stored as a list of data tables, with a measurement for each hour in the specified time period, for the set of temperature variables. The default variables are temperature, humidity, pressure, wind speed and a plain-text set of conditions. To achieve this, it records the first measurement it receives for each hour (data from PWS is generally at 5 minute intervals). Any missing hours are filled with NAs. Note that the API allows for a query of weather history for a single day at a time. As a result, loading of weather data requires a total of (number of stations * number of variables) calls, which can rapidly lead to exceeding of free Weather Underground API restrictions. To help with this, an optional station limit can be provided so that only a fixed number of stations are queried. The function will output some progress messages so the user knows something is working.
+Loading weather data is achieved through the loadWeatherData() function. It 
+takes a start and end date, as well as a start and end hour (between 0 and 23) 
+and retrieves a set of temperature variables for each PWS in the PWStations 
+object for that time period. The result is stored as a list of data tables, 
+with a measurement for each hour in the specified time period, for the set of 
+temperature variables. The default variables are temperature, humidity, 
+pressure, wind speed and a plain-text set of conditions. To achieve this, it 
+records the first measurement it receives for each hour (data from PWS is 
+generally at 5 minute intervals). Any missing hours are filled with NAs. Note 
+that the API allows for a query of weather history for a single day at a time. 
+As a result, loading of weather data requires a total of (number of stations * 
+number of variables) calls, which can rapidly lead to exceeding of free Weather 
+Underground API restrictions. To help with this, an optional station limit can 
+be provided so that only a fixed number of stations are queried. The function 
+will output some progress messages so the user knows something is working.
 
 Some examples of loading weather data are as follows (not run due here):
 
@@ -107,13 +168,23 @@ weatherData2 <- loadWeatherData(stations,
 ## Requirement 4: Visualizing the data
 
 ## Requirement 5: Approximating missing data
-Missing data did not seem to be a huge issue since we are limiting to hourly intervals and PWS generally seemed to provide data for each hour that we queried. However we did build a function called validateTrimAndFill which does three things:
+Missing data did not seem to be a huge issue since we are limiting to hourly 
+intervals and PWS generally seemed to provide data for each hour that we 
+queried. However we did build a function called validateTrimAndFill which does 
+three things:
 
-1. Check all values and determine if they are within a (generously) reasonable range. If they are not, they will be replaced with an NA.
+1. Check all values and determine if they are within a (generously) reasonable 
+range. If they are not, they will be replaced with an NA.
 2. Trim each table so that any columns with less than 2 data points are removed.
-3. Fill in missing values by taking the mean of 5 imputations using the amelia function.
+3. Fill in missing values by taking the mean of 5 imputations using the amelia 
+function.
 
-The valid ranges were determined loosely, by examining lowest/highest recorded values. This means that we will only find obvious problems, which is fair. Using Amelia to fill values may not necessarily be appropriate, but it allows the user to easily fill in missing values. Five imputations are performed of the dataset and values are the mean of these imputations. It would be up to the user to decide a more rigorous model for interpolation/estimation.
+The valid ranges were determined loosely, by examining lowest/highest recorded 
+values. This means that we will only find obvious problems, which is fair. 
+Using Amelia to fill values may not necessarily be appropriate, but it allows 
+the user to easily fill in missing values. Five imputations are performed of the
+dataset and values are the mean of these imputations. It would be up to the user
+to decide a more rigorous model for interpolation/estimation.
 
 Some sample code is as follows (included in examples):
 
@@ -139,5 +210,10 @@ validateTrimAndFill(charlotteStations)
 ```
 
 ## Testing
-testthat is used to run automated tests on each of the functions (outside of shiny). It does some basic tests of invalid input as well as the core functionality described here. We limit testing because of the number of calls that generally have to be made and would have to invest in a more rigorous testing scheme if we were to continue here i.e. improve the design so that we could shim the API and run many more tests locally etc.
+testthat is used to run automated tests on each of the functions (outside of 
+shiny). It does some basic tests of invalid input as well as the core 
+functionality described here. We limit testing because of the number of calls 
+that generally have to be made and would have to invest in a more rigorous 
+testing scheme if we were to continue here i.e. improve the design so that we 
+could shim the API and run many more tests locally etc.
 

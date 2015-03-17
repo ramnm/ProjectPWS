@@ -9,9 +9,10 @@
 PWStations
 }
 \description{
-This class holds the result of a WUnderground API query. The parameters imply
-the query used (i.e. if zip is set, a zip lookup was performed) and the resulting stations
-are stored in a stations data table.
+This class holds the result of a WUnderground API query.
+             The parameters imply the query used (i.e. if zip is set, a zip
+             lookup was performed) and the resulting stations are stored in
+             a stations data table.
 }
 \author{
 Maruthi Ram Nadakuduru, Jared Casale

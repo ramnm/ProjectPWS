@@ -8,8 +8,10 @@
 #'        format mm/dd/YYYY.
 #' @param endDate End of time period of interest. If specified, must be a
 #'        string with format mm/dd/YYYY.
-#' @param startHour First hour of period of interest. Must be numeric between 0 and 23.
-#' @param endHour Last hour of period of interest. Must be numeric between 0 and 23.
+#' @param startHour First hour of period of interest.
+#'        Must be numeric between 0 and 23.
+#' @param endHour Last hour of period of interest.
+#'        Must be numeric between 0 and 23.
 #' @param weatherVars Variables to retrieve, must be one of "tempi"
 #'        (temperature imperial i.e. Fahrenheit), "hum" (humidity),
 #'        "wspid" (Weather speed imperial), "pressure". Plain-text
@@ -201,10 +203,15 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
   }
 
   getDayHistory <- function(stationId, day, firstDay, lastDay) {
-    usertoken <- Sys.getenv("WUNDERGROUND_TOKEN")
+    apiKey <- Sys.getenv("WUNDERGROUND_API_KEY")
+    if (is.na(apiKey) || apiKey == "") {
+      stop(paste0("A WUnderground API key must be specified as the environment",
+                  "variable 'WUNDERGROUND_API_KEY'."))
+    }
+
     baseurl <- "http://api.wunderground.com/api/"
     historyUrl <- paste0(baseurl,
-                         usertoken,
+                         apiKey,
                          "/history_",
                          format(day, "%Y%m%d"),
                          "/q/PWS:",

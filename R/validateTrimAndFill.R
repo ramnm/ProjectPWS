@@ -11,11 +11,12 @@
 #'        the \code{\link[Amelia]{amelia}} function.
 #' }
 #' @param pwStations PWStations object with loaded weather data.
-#' @param stopAfterValidation Will stop after replacing values outside the reasonable
-#'        range with NA and return the resulting list of tables.
-#' @param stopAfterTrim Will stop after trimming columns with less than 2 data points.
-#' @return  A list of data tables representing the original weather data with the
-#'          specified operations applied.
+#' @param stopAfterValidation Will stop after replacing values outside the
+#'        reasonable range with NA and return the resulting list of tables.
+#' @param stopAfterTrim Will stop after trimming columns with less than 2 data
+#'        points.
+#' @return  A list of data tables representing the original weather data with
+#'          the specified operations applied.
 #' @export validateTrimAndFill
 #' @examples
 #' data(charlotteStations)
@@ -52,8 +53,9 @@ validateTrimAndFill <- function(pwStations,
   validationTable <- data.frame(
     varName = weatherVars,
     canValidate = c(TRUE, TRUE, TRUE, TRUE, FALSE),
-    minValue = c(-100, 0, 0, 20, NA),
-    maxValue = c(120, 100, 250, 33, NA)) #Deg. F, Relative humidity, Miles per hour, Inches of Mercury
+    minValue = c(-130, 0, 0, 20, NA),
+    #Deg. F, Relative humidity, Miles per hour, Inches of Mercury
+    maxValue = c(135, 100, 253, 33, NA))
 
   # Fills in NA where values are outside the range
   validateAndFill <- function(weatherData) {
@@ -117,7 +119,7 @@ validateTrimAndFill <- function(pwStations,
 
           a.out <- Amelia::amelia(toImpute,
                                   m = 5,
-                                  p2s = 1)
+                                  p2s = 0)
 
           # This method is potentially statistically poor
           # The imputations should be kept separately, or

@@ -38,11 +38,11 @@ test_that("invalid input results in error", {
 # Testing some of the functions requires LOTS of calls, only do a
 # basic test here.
 latLongStations <- getStations(latlong = c(35.229, -80.8433),
-                               radius = 2)
+                               radius = 10)
 test_that("stations are queried correctly", {
   expect_true(nrow(latLongStations$stations) > 1)
   expect_true("Charlotte" %in% latLongStations$stations$city)
-  expect_true(max(latLongStations$stations$distance_mi) <= 2)
+  expect_true(max(latLongStations$stations$distance_mi) <= 10)
   expect_equal(latLongStations$queryArg, "35.229,-80.8433")
 })
 

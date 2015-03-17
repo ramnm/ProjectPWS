@@ -2,9 +2,12 @@ Package: ProjectPWS
 Title: STAT290 Class Project on Personal Weather Station Data.
 Version: 0.1
 Date: 2015-02-18
-Author: Maruthi Ram Nadakuduru <mailtomaruthi@gmail.com> Jared Casale <jared.casale@gmail.com>
-Maintainer: Maruthi Ram Nadakuduru <mailtomaruthi@gmail.com> Jared Casale <jared.casale@gmail.com>
-Description: Personal Weather Station Data - Class Project
+Author: Maruthi Ram Nadakuduru <mailtomaruthi@gmail.com>
+    Jared Casale <jared.casale@gmail.com>
+Maintainer: Maruthi Ram Nadakuduru <mailtomaruthi@gmail.com>
+    Jared Casale <jared.casale@gmail.com>
+Description: Loads data from the Weather Underground API. Visualizations
+    provided by the leaflet package.
 Depends: R (>= 3.1.2)
 Imports: XML, data.table, Amelia, R6
 Suggests: shiny, testthat,
