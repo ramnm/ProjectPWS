@@ -3,7 +3,7 @@ input[type="number"] {
 }
 div.outer {
   position: fixed;
-  top: 41px;
+  top: 15px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -15,7 +15,7 @@ body, label, input, button, select {
   font-family: 'Helvetica Neue', Helvetica;
   font-weight: 200;
 }
-h1, h2, h3, h4 { font-weight: 400; }
+h1, h2, h3, h4 { font-weight: 200; }
 #controls {
 /* Appearance */
   background-color: white;
