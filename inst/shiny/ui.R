@@ -22,9 +22,9 @@ shinyUI(
             )
           ),
           absolutePanel(id = "controls", class = "panel panel-default",
-            fixed = TRUE, draggable = FALSE, top = 60,
-            left = "auto", right = 20, bottom = "auto",
-            width = 330, height = "auto", h3("Station Selection Criteria"),
+            fixed = TRUE, draggable = FALSE, top = 40,
+            left = "auto", right = 10, bottom = "auto",
+            width = 330, height = "auto", h4("Station Selection Criteria"),
             selectInput("input_type", "Input type",
                  c("Zip Code", "State Code", "Country Code",
                    "Local File Load")),
@@ -78,9 +78,9 @@ shinyUI(
             )
           ),
           absolutePanel(id = "controls", class = "panel panel-default",
-            fixed = TRUE, draggable = FALSE, top = 60,
-            left = "auto", right = 20, bottom = "auto",
-            width = 330, height = "auto", h3("Weather Selection Criteria"),
+            fixed = TRUE, draggable = FALSE, top = 40,
+            left = "auto", right = 10, bottom = "auto",
+            width = 330, height = "auto", h4("Weather Selection Criteria"),
             fluidRow(
               column(7,dateInput("stDate",label="Start Date",
                                  value="2015-02-01")),
@@ -102,16 +102,17 @@ shinyUI(
                                    "05:00PM","06:00PM","07:00PM","08:00PM",
                                    "09:00PM","10:00PM","11:00PM","12:00PM")))),
             fluidRow(
-              column(12,radioButtons("wParm",label="Weather Attribute",
-                                     choices=list("Temperature"=1,
-                                                  "Humidity"=2,
-                                                  "Wind Speed"=3,
-                                                  "Pressure"=4),selected=1))),
-            fluidRow(
               column(12,actionButton("getWeather",label="Get Weather"))),
             fluidRow(
               column(12,conditionalPanel("input.getWeather > 0",hr(),
                         uiOutput("weatherRange")))),
+            fluidRow(
+              column(12,conditionalPanel("input.getWeather > 0",
+                radioButtons("wParm",label="Weather Attribute",
+                                     choices=list("Temperature"=1,
+                                                  "Humidity"=2,
+                                                  "Wind Speed"=3,
+                                                  "Pressure"=4),selected=1)))),
             fluidRow(
               column(12,conditionalPanel("input.getWeather > 0",
                         imageOutput("weatherLegend",width = "100%",

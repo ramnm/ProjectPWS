@@ -162,9 +162,8 @@ shinyServer(function(input,output,session){
   })
 #
   output$weatherLegend <- renderImage({
-    if(input$getWeather > 0){
       print("in weather legend")
-      imageName <- switch(isolate(input$wParm),
+      imageName <- switch(input$wParm,
                           "1" = "tempLegend.png",
                           "2" = "humidLegend.png",
                           "3" = "windSLegend.png",
@@ -175,8 +174,7 @@ shinyServer(function(input,output,session){
                                 winslash="\\")
       print(fileName)
       list(src = fileName)
-    }
-  })
+  }, deleteFile = FALSE)
 #
   output$weatherRange <- renderUI({
     if(input$getWeather > 0){
@@ -186,6 +184,8 @@ shinyServer(function(input,output,session){
       time1 <- which(timesRef == isolate(input$stTime))
       date2 <- as.Date(isolate(input$endDate),format="%Y-%m-%d")
       time2 <- which(timesRef == isolate(input$endTime))
+      print(date1)
+      print(date2)
       print(time1)
       print(time2)
       dateRange <- as.character(seq(from = date1, to = date2, by = 1))
@@ -204,11 +204,66 @@ shinyServer(function(input,output,session){
             temp <<- c(temp,paste(dateRange[x],timesRef))
           }
         }
+        print(temp)
       })
       timeRange <- temp
       selectInput("attrRange",label="Select Time",timeRange)
     }
   })
+# observe block for changes to the weatherRange dropdown or weather attribute
+  wmapObs <- observe({
+    print("in observe")
+    if(is.null(input$attrRange)) return()
+    wRangeVal <- input$attrRange
+    wIndex <- switch(input$wParm,
+                       "1" = 3,
+                       "2" = 4,
+                       "3" = 5,
+                       "4" = 6)
+    isolate({
+      tryCatch({
+      wMap$clearMarkers()
+      wMap$clearShapes()
+      dateTime <- wRangeVal
+      dateW <- substr(dateTime,start=1,stop=10)
+      timeW <- substr(dateTime,start=12,stop=18)
+      timeW <- which(timesRef==timeW) - 1
+#
+      wTable <- obj$weatherData
+      wPins <<- sapply(wTable,function(x){
+                 a <- which(x$day == dateW & x$hour == as.character(timeW))
+                 if (length(a) == 0) {
+                   NA
+                 } else {
+                   x[[a,wIndex]]
+                 }
+      })
+      colors <- switch(input$wParm,
+                       "1" = tempColors,
+                       "2" = humidColors,
+                       "3" = windSColors,
+                       "4" = pressureColors)
+      print(wPins)
+      print(colors)
+      wMap$fitBounds(min(pins$lat),min(pins$lon),max(pins$lat),max(pins$lon))
+      for(i in 1:nrow(pins)){
+        if(!is.na(wPins[i])){
+          col <- colors[(colors$from <= wPins[i] & colors$to > wPins[i]),3]
+          print(col)
+          wMap$addCircleMarker(lat = pins$lat[i], lng = pins$lon[i],
+                               radius = 10,
+                               layerId = pins$id[i],
+                               options = list(color='black',
+                                              weight=5,
+                                              fillColor=col,
+                                              fillOpacity = 0.5))
+        }
+      }},
+      error = function(e) {print(e)}
+      )
+    })
+  })
+#
 # observe block to show pop-ups on weather map
   wmapPopObs <- observe({
     print("in popup observe")
@@ -231,56 +286,4 @@ shinyServer(function(input,output,session){
       wMap$showPopup(event$lat, event$lng, content, event$id)
     })
   })
-# observe block for changes to the weatherRange dropdown.
-  wmapObs <- observe({
-    print("in observe")
-    if(input$getWeather == 0) return()
-    if(is.null(input$attrRange)) return()
-    wRangeVal <- input$attrRange
-    isolate({
-      tryCatch({
-      dateTime <- wRangeVal
-      dateW <- substr(dateTime,start=1,stop=10)
-      timeW <- substr(dateTime,start=12,stop=18)
-      timeW <- which(timesRef==timeW) - 1
-#
-      wTable <- obj$weatherData
-      wIndex <- switch(isolate(input$wParm),
-                       "1" = 3,
-                       "2" = 4,
-                       "3" = 5,
-                       "4" = 6)
-      wPins <<- sapply(wTable,function(x){
-                 a <- which(x$day == dateW & x$hour == as.character(timeW))
-                 if (length(a) == 0) {
-                   NA
-                 } else {
-                   x[[a,wIndex]]
-                 }
-      })
-      colors <- switch(isolate(input$wParm),
-                       "1" = tempColors,
-                       "2" = humidColors,
-                       "3" = windSColors,
-                       "4" = pressureColors)
-      print(wPins)
-      wMap$fitBounds(min(pins$lat),min(pins$lon),max(pins$lat),max(pins$lon))
-      for(i in 1:nrow(pins)){
-        if(!is.na(wPins[i])){
-          wMap$addCircleMarker(lat = pins$lat[i], lng = pins$lon[i],
-                               radius = 10,
-                               layerId = pins$id[i],
-                               options = list(color='black',
-                                              weight=5,
-                                              fillColor=
-                                              colors[(colors$from <= wPins[i] &
-                                              colors$to > wPins[i]),3],
-                                              fillOpacity = 0.5))
-        }
-      }},
-      error = function(e) {print(e)}
-      )
-    })
-  })
-#
 })
