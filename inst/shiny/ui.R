@@ -1,5 +1,9 @@
 suppressMessages(library(shiny))
 library(leaflet)
+
+load(system.file("shiny\\www\\shinyData.rda", package = "ProjectPWS"),
+     envir = environment())
+
 shinyUI(
   navbarPage("ProjectPWS",id="pwsNav",
     tabPanel("Stations Map",

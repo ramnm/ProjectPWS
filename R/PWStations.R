@@ -64,8 +64,7 @@ PWStations <- R6::R6Class("PWStations",
                       "city"))
         }
 
-        if (!is.character(zip) || nchar(zip) != 5 ||
-              !any(zipcodes[zipcodes$zip == zip, 1])) {
+        if (!is.character(zip) || nchar(zip) != 5) {
           stop("Please specify a valid zipcode string.")
         }
 

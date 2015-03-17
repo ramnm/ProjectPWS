@@ -2,6 +2,10 @@
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 ##
 library(leaflet)
+
+load(system.file("shiny\\www\\shinyData.rda", package = "ProjectPWS"),
+     envir = environment())
+
 # elements defined here are available across sessions
 obj <- ProjectPWS::PWStations$new(zip = "28262", radius = 5)
 pins <- data.frame()
@@ -19,8 +23,6 @@ shinyServer(function(input,output,session){
   print("in the header part")
   sMap <- createLeafletMap(session,"stnMap")
   wMap <- createLeafletMap(session,"weatherMap")
-  load(system.file("shiny\\www\\shinyData.rda", package = "ProjectPWS"),
-       envir = environment())
 #
   buildStn <- reactive({
     if(input$getStations > 0 ){
