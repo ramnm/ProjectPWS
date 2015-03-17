@@ -117,7 +117,7 @@ validateTrimAndFill <- function(pwStations,
 
           a.out <- Amelia::amelia(toImpute,
                                   m = 5,
-                                  p2s = 1)
+                                  p2s = 0)
 
           # This method is potentially statistically poor
           # The imputations should be kept separately, or

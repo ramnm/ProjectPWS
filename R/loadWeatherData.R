@@ -202,6 +202,11 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
 
   getDayHistory <- function(stationId, day, firstDay, lastDay) {
     usertoken <- Sys.getenv("WUNDERGROUND_TOKEN")
+    if (is.na(usertoken) || usertoken == "") {
+      stop(paste0("A WUnderground API key must be specified as the environment",
+                  "variable 'WUNDERGROUND_TOKEN'."))
+    }
+
     baseurl <- "http://api.wunderground.com/api/"
     historyUrl <- paste0(baseurl,
                          usertoken,

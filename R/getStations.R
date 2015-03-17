@@ -43,8 +43,8 @@
 #' }
 getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
                         city = NA, radius = NA) {
- # Create a PWStations object to return.
- # This also provides some validation of the arguments
+  # Create a PWStations object to return.
+  # This also provides some validation of the arguments
   pwstationObj <- PWStations$new(latlong = latlong,
                                  zip = zip,
                                  state = state,
@@ -54,7 +54,7 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
 
   # Retrieve the API key from environment variable
   usertoken <- Sys.getenv("WUNDERGROUND_TOKEN")
-  if (is.na(usertoken)) {
+  if (is.na(usertoken) || usertoken == "") {
     stop(paste0("A WUnderground API key must be specified as the environment",
                 "variable 'WUNDERGROUND_TOKEN'."))
   }
