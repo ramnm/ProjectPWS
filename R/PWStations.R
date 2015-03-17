@@ -1,9 +1,10 @@
 #' PWS Storage
 #' @docType class
 #' @author Maruthi Ram Nadakuduru, Jared Casale
-#' @description This class holds the result of a WUnderground API query. The parameters imply
-#' the query used (i.e. if zip is set, a zip lookup was performed) and the resulting stations
-#' are stored in a stations data table.
+#' @description This class holds the result of a WUnderground API query.
+#'              The parameters imply the query used (i.e. if zip is set, a zip
+#'              lookup was performed) and the resulting stations are stored in
+#'              a stations data table.
 #' @importFrom R6 R6Class
 #' @format An \code{\link{R6Class}} generator object
 #' @keywords PWS, Wunderground

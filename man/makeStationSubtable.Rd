@@ -52,7 +52,9 @@ makeStationSubtable(charlotteStations, newRadius = 5)$stations
 makeStationSubtable(charlotteStations, numberToKeep = 3)$stations
 
 # Keep 3 farthest
-makeStationSubtable(charlotteStations, numberToKeep = 3, nearest = FALSE)$stations
+makeStationSubtable(charlotteStations,
+                    numberToKeep = 3,
+                    nearest = FALSE)$stations
 
 # Keep specific stations
 makeStationSubtable(charlotteStations,

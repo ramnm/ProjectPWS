@@ -10,14 +10,15 @@ validateTrimAndFill(pwStations, stopAfterValidation = FALSE,
 \arguments{
 \item{pwStations}{PWStations object with loaded weather data.}
 
-\item{stopAfterValidation}{Will stop after replacing values outside the reasonable
-range with NA and return the resulting list of tables.}
+\item{stopAfterValidation}{Will stop after replacing values outside the
+reasonable range with NA and return the resulting list of tables.}
 
-\item{stopAfterTrim}{Will stop after trimming columns with less than 2 data points.}
+\item{stopAfterTrim}{Will stop after trimming columns with less than 2 data
+points.}
 }
 \value{
-A list of data tables representing the original weather data with the
-         specified operations applied.
+A list of data tables representing the original weather data with
+         the specified operations applied.
 }
 \description{
 Takes a PWStation object and loops through all of its
