@@ -11,8 +11,8 @@ vignette: >
 
 ProjectPWS is the package written for STAT290 by Jared Casale and Maruthi Ram 
 Nadakuduru. It aimed to fulfil the requirements of the suggested project topic 
-relating to querying the Weather Underground website for PWS data. The basic 
-requirements were roughly as follows:
+relating to querying the [Weather Underground website](1) for PWS data. The 
+basic requirements were roughly as follows:
 
 1. Provide a means of querying the website to retrieve all PWS near a location 
 (e.g. zipcode + distance) or within a region (e.g. a country name). This should 
@@ -30,47 +30,67 @@ The following discusses some known issues/quirks and then each requirement is
 addressed with sample code where appropriate.
 
 ## Credits
-Please note that CSS file included in the shiny UI and the panel designs are inspired by the Shiny SuperZip example on the Shiny RStudio website
+Please note that CSS file included in the shiny UI and the panel designs are 
+inspired by the Shiny SuperZip example on the Shiny RStudio website
+
 Here is a link to the website
 http://shiny.rstudio.com/gallery/superzip-example.html
 
-We have also referred to many examples of Shiny packages in the 'Show me Shiny' website to get ideas on how to design the UI components. Here is a link to that website  http://www.showmeshiny.com/
+We have also referred to many examples of Shiny packages in the 'Show me Shiny' 
+website to get ideas on how to design the UI components. Here is a link to that 
+website  http://www.showmeshiny.com/
 
-
+[1]: http://www.wunderground.com/
 ## Known issues/quirks
 ### Weather Underground API Key
-Use of the API requires an API key. The free tier pricing provides a key with 
-severe call limitations, namely 10 calls per minute. Note that each geolookup 
-requires a single call and filling a region requires a call to get all cities 
-in that region, followed by a call for each city returned to get the stations. 
-More restrictive is the fact that the weather history (loading weather data) 
-requires a call for each station, for each day in the period. This leads to a 
-LOT of calls in a short period. We have provided a key with the package that 
-will surely be revoked after too much usage. To work around this, the user would
-need to obtain their own key and set the environment variable 
+Use of the [API](2) requires an API key. The free tier pricing provides a key 
+with severe call limitations, namely 10 calls per minute. Note that each 
+geolookup requires a single call and filling a region requires a call to get all 
+cities in that region, followed by a call for each city returned to get the 
+stations. More restrictive is the fact that the weather history (loading weather 
+data) requires a call for each station, for each day in the period. This leads 
+to a LOT of calls in a short period. We have provided a key with the package 
+that will surely be revoked after too much usage. To work around this, the user 
+would need to obtain their own key and set the environment variable 
 "WUNDERGROUND_API_KEY". All functions would then pick up this variable before 
 each new call. The .onAttach function checks for an environment variable with
 a key, and sets the default if it is missing. .onDetach will clear this variable
 if it is still the default.
 
+Running tests will make some queries, please run tests or Check sparingly also.
+
+[2]: http://www.wunderground.com/weather/api/
 
 ### Functions vs R6 methods
 We began writing the project with an S4 class, then moved to R6. Unfortunately, 
 we couldn't find a great way of documenting the class and chose to leave the 
 bulk of our code as separate functions that require one of the R6 objects to be 
-passed to it. The result is no different and the object is still the way to 
-handle state for all of the actions.
+passed to it. The result is no different and the object is always used to store
+state between calls. Saving progress is as simple as saving that PWStations 
+object.
 
 ### Shiny Issues
 There are a couple of issues with the Shiny UI we could not resolve in time and
 here are the details:
 
-1. Load Local File Option on Stations Tab - If the user loads a file that is not a PWStations R6 object we were able to through a error message, however if the user then loads a valid PWStations object file the error continues to be thrown. In this case the user will have to shutdown the application and restart it.
-2. Pop-ups on the Weather Tab - We put in shiny code to display a pop-up if the user clicked on the markers for the stations to show the station ID and the weather parameter. But the pop-ups still do not work.
-  
+1. Load Local File Option on Stations Tab - If the user loads a file that is not 
+a PWStations R6 object we were able to through a error message, however if the 
+user then loads a valid PWStations object file the error continues to be thrown. 
+In this case the user will have to shutdown the application and restart it.
+2. Pop-ups on the Weather Tab - We put in shiny code to display a pop-up if the 
+user clicked on the markers for the stations to show the station ID and the 
+weather parameter. But the pop-ups still do not work.
+
+### Examples
+Examples are only run if they don't make API calls (since the API key will be 
+worn out quickly as mentioned). Examples are provided using a sample data set 
+that will be run using example(ProjectPWS). There is also example code in this
+vignette and in the functions that is not run showing how the live calls can be 
+made.
+
 ## Requirement 1: Querying for PWS
 
-To load PWS data, we have a method calleed getStations. It queries the 
+To load PWS data, we have a function calleed *getStations*. It queries the 
 WUnderground API to get all PWS meeting the specified criteria. Valid queries 
 for location are as follows:
 
@@ -90,7 +110,8 @@ results of the lookup. If a state or country is supplied without a city, then
 the results of the first lookup give a list of cities within that location. This
 function then performs a separate query for each of the region/city pairs and 
 concatenates the resulting stations. The following code shows sample queries, 
-but requires internet connectivity (skipped in this document):
+but requires internet connectivity (skipped in this document to save the API key
+):
 
 ```{r, eval=FALSE}
 library(ProjectPWS)
@@ -103,9 +124,12 @@ cityStations <- getStations(state = "OR", city = "Portand", radius = 3)
 countryStations <- getStations(country = "Spain")
 ```
 
+For persistence, all data is stored in the R6 object, so to save state a user
+can simply use R's *save* function and retrieve it using *load*.
+
 ## Requirement 2: Store in a class
 We started out using an S4 class but preferred to use an R6 class. The class 
-PWStations is the container that we load data into. It performs some basic 
+*PWStations* is the container that we load data into. It performs some basic 
 validation of the query used to create the table in the initialize() function 
 and stores the data used for the query. Calling getStations() will associate a 
 data table of PWS stations from the resulting query with the object. Likewise, 
@@ -113,7 +137,7 @@ calling loadWeatherData() will create a list of data tables corresponding to the
 weather data retrieved for each station in the query. This list is also 
 associated with the original class.
 
-To extract subtables, we have a function called makeStationSubtable(). It 
+To extract subtables, we have a function called *makeStationSubtable*. It 
 returns a PWStations object with the specified filter applied to the original 
 PWStations. If the original object contained weather data, this will also be 
 filtered to the appropriate stations. Filter options are one of the following:
@@ -124,28 +148,37 @@ filtered to the appropriate stations. Filter options are one of the following:
 4. query location.
 5. Choosing a set of stations by name.
 
-The following code will extract some subtables from a preloaded object (output 
-suppressed):
+The following code will extract some subtables from a preloaded object (included
+in examples):
 
-```{r, eval=FALSE}
-charlotteStations <- getStations(latlong = c(35.229, -80.8433), 
-                                 radius = 10)
+```{r}
+library(ProjectPWS)
+data(charlotteStations)
 # Decrease radius to 5 miles
-makeStationSubtable(charlotteStations, 
-                    newRadius = 5)
+newRadTable <- makeStationSubtable(charlotteStations,
+                                   newRadius = 5)
+newRadTable$stations
+
 # Keep 3 closest
-makeStationSubtable(charlotteStations, 
-                    numberToKeep = 3) 
+closestTable <- makeStationSubtable(charlotteStations,
+                                    numberToKeep = 3)
+closestTable$stations
+
 # Keep 3 farthest
-makeStationSubtable(charlotteStations, 
-                    numberToKeep = 3, 
-                    nearest = FALSE)
-makeStationsSubtable(charlotteStations,
-                      stationNames = c("KNCCHARL71", "KNCCHARL83"))
+farthestTable <- makeStationSubtable(charlotteStations,
+                                     numberToKeep = 3,
+                                     nearest = FALSE)
+farthestTable$stations
+
+# Keep specific stations
+specificTable <- makeStationSubtable(charlotteStations,
+                                     stationNames = c("KNCCHARL71",
+                                                      "KNCCHARL83"))
+specificTable$stations
 ```
 
 ## Requirement 3: Load weather data for a time period
-Loading weather data is achieved through the loadWeatherData() function. It 
+Loading weather data is achieved through the *loadWeatherData* function. It 
 takes a start and end date, as well as a start and end hour (between 0 and 23) 
 and retrieves a set of temperature variables for each PWS in the PWStations 
 object for that time period. The result is stored as a list of data tables, 
@@ -159,25 +192,33 @@ As a result, loading of weather data requires a total of (number of stations *
 number of variables) calls, which can rapidly lead to exceeding of free Weather 
 Underground API restrictions. To help with this, an optional station limit can 
 be provided so that only a fixed number of stations are queried. The function 
-will output some progress messages so the user knows something is working.
+will output some progress messages so the user knows something is working. As 
+an added optimization, the specified start and end hour/date are stored with
+the PWStations object - *loadWeatherData* will check to see if a query is a
+repeat and not call the API if it is.
 
-Some examples of loading weather data are as follows (not run due here):
+Some examples of loading weather data are as follows (not run here due to 
+limited API key usage):
 
 ```{r, eval=FALSE}
-stations <- getStations(zip = "98107", radius = 2)
-weatherData <- loadWeatherData(stations, startDate = "3/3/2015",
-                               startHour = 9,
-                               endHour = 5,
-                               stationLimit = 1)
+stations <- getStations(zip = "98107",
+                        radius = 2)
+loadWeatherData(stations,
+                startDate = "3/3/2015",
+                startHour = 9,
+                endHour = 5,
+                stationLimit = 1)
 
-# Just temperature and humidity
-# Startdate defaults to 0, endDate to current date
-weatherData2 <- loadWeatherData(stations, 
-                                startDate = "3/1/2015",
-                                endDate = "3/3/2015", 
-                                weatherVars = c("tempi",
-                                                "hum")
-                                stationLimit = 3)
+length(stations$weatherData)
+nrow(stations$weatherData[[1]])
+
+loadWeatherData(stations,
+                startDate = "3/1/2015",
+                endDate = "3/3/2015",
+                stationLimit = 3)
+
+length(stations$weatherData)
+nrow(stations$weatherData[[1]])
 ```
 
 ## Requirement 4: Visualizing the data
@@ -280,24 +321,23 @@ to decide a more rigorous model for interpolation/estimation.
 Some sample code is as follows (included in examples):
 
 ```{r}
-library(ProjectPWS)
 data(charlotteStations)
 
 # Just keep two stations
 charlotteStations <- makeStationSubtable(charlotteStations,
                        stationNames = c("KNCCHARL71", "KNCCHARL83"))
 
-# Load data for these stations for a single day
-loadWeatherData(charlotteStations, startDate = "3/15/2015")
-
 # Just validate
-validateTrimAndFill(charlotteStations, stopAfterValidation = TRUE)
+justVal <- validateTrimAndFill(charlotteStations, stopAfterValidation = TRUE)
+sum(is.na(justVal[[1]]))
 
 # Validate then trim
-validateTrimAndFill(charlotteStations, stopAfterTrim = TRUE)
+justTrim <- validateTrimAndFill(charlotteStations, stopAfterTrim = TRUE)
+sum(is.na(justTrim[[1]]))
 
 # Validate, trim and fill missing data
-validateTrimAndFill(charlotteStations)
+filled <- validateTrimAndFill(charlotteStations)
+sum(is.na(filled[[1]]))
 ```
 
 ## Testing
