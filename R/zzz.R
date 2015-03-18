@@ -9,7 +9,7 @@
                           "Alternately, please set an environment ",
                           "variable named WUNDERGROUND_API_KEY with",
                           " your own key.")
-    DEFAULT_KEY <- "83ff6b7a1871b233"
+    DEFAULT_KEY <- "1a53ff3abe3d9ff8"
     Sys.setenv(WUNDERGROUND_API_KEY = DEFAULT_KEY)
   }
 }
