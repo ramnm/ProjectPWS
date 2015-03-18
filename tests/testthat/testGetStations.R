@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 library(ProjectPWS)
 context("Loading weather stations")
 
@@ -45,4 +48,6 @@ test_that("stations are queried correctly", {
   expect_true(max(latLongStations$stations$distance_mi) <= 10)
   expect_equal(latLongStations$queryArg, "35.229,-80.8433")
 })
-
+##
+##  End jcasale code
+##

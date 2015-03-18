@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 .onAttach <- function(libname, pkgname) {
   # Check for an existing API key
   apiKey <- Sys.getenv("WUNDERGROUND_API_KEY")
@@ -9,7 +12,7 @@
                           "Alternately, please set an environment ",
                           "variable named WUNDERGROUND_API_KEY with",
                           " your own key.")
-    DEFAULT_KEY <- "1a53ff3abe3d9ff8"
+    DEFAULT_KEY <- "3a85a4be6e238351"
     Sys.setenv(WUNDERGROUND_API_KEY = DEFAULT_KEY)
   }
 }
@@ -18,8 +21,11 @@
   # Check if we should clean up the default key.
   apiKey <- Sys.getenv("WUNDERGROUND_API_KEY")
 
-  DEFAULT_KEY <- "83ff6b7a1871b233"
+  DEFAULT_KEY <- "3a85a4be6e238351"
   if (!is.na(apiKey) && apiKey != "" && apiKey == DEFAULT_KEY) {
     Sys.unsetenv("WUNDERGROUND_API_KEY")
   }
 }
+##
+##  End jcasale code
+##

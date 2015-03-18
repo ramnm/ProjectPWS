@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 #' Clean and fill PWS weather data
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 #' @description Takes a PWStation object and loops through all of its
@@ -161,3 +164,6 @@ validateTrimAndFill <- function(pwStations,
 
   returnWeatherList
 }
+##
+##  End jcasale code
+##

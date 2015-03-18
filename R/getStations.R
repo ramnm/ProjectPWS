@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 #' Retrieve PWS
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 #' @description Queries the WUnderground API to get all PWS meeting the
@@ -155,3 +158,6 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
 
   pwstationObj
 }
+##
+##  End jcasale code
+##

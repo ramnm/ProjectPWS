@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 library(ProjectPWS)
 context("Loading weather data for stations")
 
@@ -57,4 +60,6 @@ test_that("weather data is correctly loaded", {
   expect_true(weatherData[[1]]$hour[1] == 3)
   expect_true(weatherData[[1]]$hour[34] == 12)
 })
-
+##
+##  End jcasale code
+##

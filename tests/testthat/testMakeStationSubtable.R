@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 library(ProjectPWS)
 context("Subsetting station tables")
 
@@ -63,3 +66,6 @@ particularStations <-
 test_that("2 stations kept by name", {
   expect_true(nrow(particularStations$stations) == 2)
 })
+##
+##  End jcasale code
+##

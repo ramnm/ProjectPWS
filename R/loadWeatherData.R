@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 #' Load PWS Weather Data
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 #' @description This function will query the wunderground site and retrieve the
@@ -283,3 +286,6 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
 
   pwStations
 }
+##
+##  End jcasale code
+##

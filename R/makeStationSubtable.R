@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 #' Create subtable of PWS
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 #' @description Returns a PWStations object with the specified filter applied
@@ -107,3 +110,6 @@ makeStationSubtable <- function(pwStations, newRadius = NA, numberToKeep = NA,
 
   returnObj
 }
+##
+##  End jcasale code
+##

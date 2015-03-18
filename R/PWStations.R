@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 #' PWS Storage
 #' @docType class
 #' @author Maruthi Ram Nadakuduru, Jared Casale
@@ -138,3 +141,6 @@ PWStations <- R6::R6Class("PWStations",
     }
   )
 )
+##
+##  End jcasale code
+##
