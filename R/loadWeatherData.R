@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 #' Load PWS Weather Data
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 #' @description This function will query the wunderground site and retrieve the
@@ -24,13 +27,24 @@
 #' @export
 #' @examples
 #' \dontrun{
-#' stations <- getStations(zip = "98107", radius = 2)
-#' weatherData <- loadWeatherData(stations, startDate = "3/3/2015",
-#'                                startHour = 9,
-#'                                endHour = 5,
-#'                                stationLimit = 1)
-#' weatherData2 <- loadWeatherData(stations, startDate = "3/1/2015",
-#'                                 endDate = "3/3/2015", stationLimit = 3)
+#' stations <- getStations(zip = "98107",
+#'                         radius = 2)
+#' loadWeatherData(stations,
+#'                 startDate = "3/3/2015",
+#'                 startHour = 9,
+#'                 endHour = 5,
+#'                 stationLimit = 1)
+#'
+#' length(stations$weatherData)
+#' nrow(stations$weatherData[[1]])
+#'
+#' loadWeatherData(stations,
+#'                 startDate = "3/1/2015",
+#'                 endDate = "3/3/2015",
+#'                 stationLimit = 3)
+#'
+#' length(stations$weatherData)
+#' nrow(stations$weatherData[[1]])
 #' }
 loadWeatherData <- function(pwStations, startDate, endDate = NA,
                             startHour = NA, endHour = NA,
@@ -283,3 +297,6 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
 
   pwStations
 }
+##
+##  End jcasale code
+##

@@ -44,21 +44,27 @@ Filter options are one of the following:
 }
 \examples{
 data(charlotteStations)
-
 # Decrease radius to 5 miles
-makeStationSubtable(charlotteStations, newRadius = 5)$stations
+newRadTable <- makeStationSubtable(charlotteStations,
+                                   newRadius = 5)
+newRadTable$stations
 
 # Keep 3 closest
-makeStationSubtable(charlotteStations, numberToKeep = 3)$stations
+closestTable <- makeStationSubtable(charlotteStations,
+                                    numberToKeep = 3)
+closestTable$stations
 
 # Keep 3 farthest
-makeStationSubtable(charlotteStations,
-                    numberToKeep = 3,
-                    nearest = FALSE)$stations
+farthestTable <- makeStationSubtable(charlotteStations,
+                                     numberToKeep = 3,
+                                     nearest = FALSE)
+farthestTable$stations
 
 # Keep specific stations
-makeStationSubtable(charlotteStations,
-                     stationNames = c("KNCCHARL71", "KNCCHARL83"))$stations
+specificTable <- makeStationSubtable(charlotteStations,
+                                     stationNames = c("KNCCHARL71",
+                                                      "KNCCHARL83"))
+specificTable$stations
 }
 \author{
 Maruthi Ram Nadakuduru, Jared Casale

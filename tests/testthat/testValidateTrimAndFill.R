@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 library(ProjectPWS)
 context("Validating, trimming and filling weather data")
 
@@ -48,3 +51,6 @@ imputedData <- validateTrimAndFill(testThatStations)
 test_that("all missing data is imputed", {
   expect_true(sum(is.na(imputedData[[1]])) == 0)
 })
+##
+##  End jcasale code
+##

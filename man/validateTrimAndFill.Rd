@@ -40,13 +40,16 @@ lessStations <- makeStationSubtable(charlotteStations,
                        stationNames = c("KNCCHARL71", "KNCCHARL83"))
 
 # Just validate
-validateTrimAndFill(charlotteStations, stopAfterValidation = TRUE)
+justVal <- validateTrimAndFill(charlotteStations, stopAfterValidation = TRUE)
+sum(is.na(justVal[[1]]))
 
 # Just validate and trim
-validateTrimAndFill(charlotteStations, stopAfterTrim = TRUE)
+justTrim <- validateTrimAndFill(charlotteStations, stopAfterTrim = TRUE)
+sum(is.na(justTrim[[1]]))
 
 # Validate, trim and then fill missing data
-validateTrimAndFill(charlotteStations)
+filled <- validateTrimAndFill(charlotteStations)
+sum(is.na(filled[[1]]))
 }
 \author{
 Maruthi Ram Nadakuduru, Jared Casale

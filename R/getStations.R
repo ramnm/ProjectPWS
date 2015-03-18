@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 #' Retrieve PWS
 #' @author Maruthi Ram Nadakuduru, Jared Casale
 #' @description Queries the WUnderground API to get all PWS meeting the
@@ -34,8 +37,8 @@
 #' @export getStations
 #' @examples
 #' \dontrun{
-#' latLongStations <- getStations(latlong = c(35.229, -80.8433), radius = 2)
 #' # Charlotte
+#' latLongStations <- getStations(latlong = c(35.229, -80.8433), radius = 2)
 #' zipStations <- getStations(zip = "90210", radius = 10)
 #' berlinStations <- getStations(country = "Germany", city = "Berlin")
 #' cityStations <- getStations(state = "OR", city = "Portand", radius = 3)
@@ -155,3 +158,6 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
 
   pwstationObj
 }
+##
+##  End jcasale code
+##
