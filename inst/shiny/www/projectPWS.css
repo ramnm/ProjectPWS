@@ -1,9 +1,13 @@
+/* This CSS file has been reused from the Shiny SuperZip example
+   provided on the Shiny RStudio Gallery site. Here is a link to the website
+   http://shiny.rstudio.com/gallery/superzip-example.html
+*/
 input[type="number"] {
   max-width: 80%;
 }
 div.outer {
   position: fixed;
-  top: 15px;
+  top: 41px;
   left: 0;
   right: 0;
   bottom: 0;
@@ -15,7 +19,7 @@ body, label, input, button, select {
   font-family: 'Helvetica Neue', Helvetica;
   font-weight: 200;
 }
-h1, h2, h3, h4 { font-weight: 200; }
+h1, h2, h3, h4 { font-weight: 400; }
 #controls {
 /* Appearance */
   background-color: white;

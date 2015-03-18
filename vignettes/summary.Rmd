@@ -29,6 +29,14 @@ microclimate.
 The following discusses some known issues/quirks and then each requirement is 
 addressed with sample code where appropriate.
 
+## Credits
+Please note that CSS file included in the shiny UI and the panel designs are inspired by the Shiny SuperZip example on the Shiny RStudio website
+Here is a link to the website
+http://shiny.rstudio.com/gallery/superzip-example.html
+
+We have also referred to many examples of Shiny packages in the 'Show me Shiny' website to get ideas on how to design the UI components. Here is a link to that website  http://www.showmeshiny.com/
+
+
 ## Known issues/quirks
 ### Weather Underground API Key
 Use of the API requires an API key. The free tier pricing provides a key with 
@@ -53,6 +61,13 @@ bulk of our code as separate functions that require one of the R6 objects to be
 passed to it. The result is no different and the object is still the way to 
 handle state for all of the actions.
 
+### Shiny Issues
+There are a couple of issues with the Shiny UI we could not resolve in time and
+here are the details:
+
+1. Load Local File Option on Stations Tab - If the user loads a file that is not a PWStations R6 object we were able to through a error message, however if the user then loads a valid PWStations object file the error continues to be thrown. In this case the user will have to shutdown the application and restart it.
+2. Pop-ups on the Weather Tab - We put in shiny code to display a pop-up if the user clicked on the markers for the stations to show the station ID and the weather parameter. But the pop-ups still do not work.
+  
 ## Requirement 1: Querying for PWS
 
 To load PWS data, we have a method calleed getStations. It queries the 
@@ -166,7 +181,83 @@ weatherData2 <- loadWeatherData(stations,
 ```
 
 ## Requirement 4: Visualizing the data
+As per the project requirements the user can do the following tasks - 
 
+* Get the List Weather Stations for:
+
+    * Range of Miles from a Zip Code
+    * State
+    * Country
+    * Locally loaded PWStation Object
+
+* Get the Weather information for the selected stations within a starting and
+  ending time range. 
+
+* Download the stations and weather data as a PWStations Object(.rds) into 
+  their local system.
+
+Here are the main Use Cases the Shiny User Interface covers - 
+
+* Use Case 1 - 'Get Stations': As mentioned above the user can select from four
+  options on the 'Stations Map' tab -
+  
+    * Zip Code (with Range)
+    * State
+    * Country 
+    * Local File Load
+  
+  Once the user selects one of the options from the 'Input Type' dropdown, they 
+  are presented with the appropriate selection criteria. Once they enter the 
+  station selection criteria they will have to hit the 'Get Stations' button to 
+  retrieve the stations. The Map automatically zooms in to a level that covers 
+  all the stations returned, also marking the stations on the map. The user can
+  zoom in and out of the map but the map stays centered at the stations just 
+  retrieved.
+  The user can look at the retrieved stations data in a table format on the 
+  'Data Table' tab. On that tab the user can see a histogram that gives the 
+  number of stations within given distance. Below the histogram the station 
+  data is displayed as data table that can be filtered and sorted on the screen
+  The 'Save Data Locally' button is provided on the top right of the screen on
+  this tab and the details of it are explained in the download data use case 
+  below.
+
+* Use Case 2 - 'Get Weather': Once the stations are retrieved, the user can 
+  go to the 'Weather Map' tab and enter the start and end times on the 'Weather
+  Selection Criteria' panel. After providing the date/time range, they will 
+  have to click on the 'Get Weather' button to fetch the weather data. 
+  Once the weather data is fetched the following things happen - 
+
+    * The map zooms in to a level that covers all the stations just like the 
+      stations map. This time the stations are color coded based on the weather 
+      attribute selected. 
+    * Under the 'Get Weather' button, a drop down to select each hour in the 
+      selected time range is provided along with a drop down to select the 
+      weather attribute - 'Temperature','Humidity','Wind Speed' and 'Pressure'.
+      Also a legend of the color codes used to mark the stations is thrown.
+
+* Use Case 3 - Downloading Data: If the user wishes to save the stations data 
+  or the stations data along with the weather data, they can go to the 
+  'Data Table' tab and click on the 'Save Data Locally' button on the top right
+  side of the page. The data stored depends on what was retrieved at the point
+  when the button was clicked. If only the stations data was retrieved at that
+  point only that information gets saved locally. The files are named by 
+  default based on the station selection criteria but the user has the option 
+  to change the name in the windows download box that is thrown. 
+
+* Use Case 4 - Loading Local Data: This option is slightly different from the 
+  other station selection criteria. The loaded file has to be a PWStations 
+  object that was downloaded through this application. The user will have to 
+  select the file and then click on 'Get Stations' button to show the data on 
+  the 'Stations Map' and 'Data Table' tabs. In the back end none of the API 
+  calls are made, instead data is loaded from the local file as expected.
+  Even if the weather data was saved along with this file, the 'Weather Map' 
+  tab does not load the Weather Data automatically. The user will again have to
+  provide the starting time and ending time to get the data. If the time range 
+  provided is the same as the time range of the weather data in the local file
+  then the weather data is loaded directly from the file. If they are not the
+  same then the API calls are made to get the weather data for the new time
+  range provided. 
+  
 ## Requirement 5: Approximating missing data
 Missing data did not seem to be a huge issue since we are limiting to hourly 
 intervals and PWS generally seemed to provide data for each hour that we 

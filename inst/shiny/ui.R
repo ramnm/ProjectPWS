@@ -1,17 +1,43 @@
-suppressMessages(library(shiny))
+##
+## Begin 06005272 - Maruthi Ram Nadakuduru Code
+##
+## Credits
+## -------
+## Please note that CSS file included in this shiny UI and the panel designs
+## are inspired by the Shiny SuperZip example on the Shiny RStudio website
+## Here is a link to the website
+## http://shiny.rstudio.com/gallery/superzip-example.html
+##
+## We have also referred to many examples of Shiny packages in the 'Show me
+## Shiny' website to get ideas on how to design the UI components. Here is a
+## link to that website
+## http://www.showmeshiny.com/
+##
+library(shiny)
 library(leaflet)
+
+# Loading all the data needed for the shiny UI such as weather color legends,
+# zip codes, state codes etc.
 
 load(system.file("shiny\\www\\shinyData.rda", package = "ProjectPWS"),
      envir = environment())
 
+# The Shiny UI session function starts here
+
 shinyUI(
   navbarPage("ProjectPWS",id="pwsNav",
+
+# This is the Stations Map tab
+
     tabPanel("Stations Map",
       div(class="outer",
           tags$head(
             tags$link(rel="stylesheet", type = "text/css",
                       href = "projectPWS.css")
           ),
+
+# Leaflet Map for the stations
+
           leafletMap("stnMap", width="100%", height="100%",
             initialTileLayer =
               "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
@@ -24,6 +50,9 @@ shinyUI(
                                list(52.908902,-56.80481)) # Show US only
             )
           ),
+
+# Displays the Station Selection Criteria Panel on the right side
+
           absolutePanel(id = "controls", class = "panel panel-default",
             fixed = TRUE, draggable = FALSE, top = 40,
             left = "auto", right = 10, bottom = "auto",
@@ -49,7 +78,9 @@ shinyUI(
           )
       )
     ),
-##
+
+# This is the Data Table tab
+
     tabPanel("Data Table",
              fluidRow(
                column(8,conditionalPanel("input.getStations > 0",
@@ -61,13 +92,18 @@ shinyUI(
              ),
              fluidRow(hr(),
                dataTableOutput("stnTable"))),
-##
+
+# This is the Weather Map tab
+
     tabPanel("Weather Map",
       div(class="outer",
           tags$head(
             tags$link(rel="stylesheet", type = "text/css",
                       href = "projectPWS.css")
           ),
+
+# Leaflet Map for the Weather
+
           leafletMap("weatherMap", width="100%", height="100%",
             initialTileLayer =
               "//{s}.tiles.mapbox.com/v3/jcheng.map-5ebohr46/{z}/{x}/{y}.png",
@@ -80,6 +116,9 @@ shinyUI(
                                list(52.908902,-56.80481)) # Show US only
             )
           ),
+
+# The Weather Selection Criteria Tab on the 'Weather Map' tab
+
           absolutePanel(id = "controls", class = "panel panel-default",
             fixed = TRUE, draggable = FALSE, top = 40,
             left = "auto", right = 10, bottom = "auto",
@@ -105,17 +144,19 @@ shinyUI(
                                    "05:00PM","06:00PM","07:00PM","08:00PM",
                                    "09:00PM","10:00PM","11:00PM","12:00PM")))),
             fluidRow(
-              column(12,actionButton("getWeather",label="Get Weather"))),
+              column(12,conditionalPanel("input.getStations > 0",
+                        actionButton("getWeather",label="Get Weather")))),
+
+# The below UI components are only displayed after the weather data is displayed
+
             fluidRow(
               column(12,conditionalPanel("input.getWeather > 0",hr(),
                         uiOutput("weatherRange")))),
             fluidRow(
               column(12,conditionalPanel("input.getWeather > 0",
-                radioButtons("wParm",label="Weather Attribute",
-                                     choices=list("Temperature"=1,
-                                                  "Humidity"=2,
-                                                  "Wind Speed"=3,
-                                                  "Pressure"=4),selected=1)))),
+                selectInput("wParm", label="Weather Attribute",
+                            c("Temperature", "Humidity", "Wind Speed",
+                              "Pressure"))))),
             fluidRow(
               column(12,conditionalPanel("input.getWeather > 0",
                         imageOutput("weatherLegend",width = "100%",
@@ -129,3 +170,6 @@ shinyUI(
     )
   )
 )
+##
+## End 06005272 - Maruthi Ram Nadakuduru Code
+##
