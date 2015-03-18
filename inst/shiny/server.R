@@ -1,12 +1,17 @@
-#' Returns the Personal Weather Stations nearby input provided
-#' @author Maruthi Ram Nadakuduru, Jared Casale
+##
+## Begin 06005272 - Maruthi Ram Nadakuduru Code
 ##
 library(leaflet)
+
+# Loading all the data needed for the shiny UI such as weather color legends,
+# zip codes, state codes etc.
 
 load(system.file("shiny\\www\\shinyData.rda", package = "ProjectPWS"),
      envir = environment())
 
-# elements defined here are available across sessions
+# Data elements defined here are available across sessions. So defining
+# key variables in this section that are needed to retain value across sessions
+
 obj <- ProjectPWS::PWStations$new(zip = "28262", radius = 5)
 pins <- data.frame()
 wPins <- integer()
@@ -17,67 +22,79 @@ timesRef <- c("01:00AM","02:00AM","03:00AM","04:00AM",
               "05:00PM","06:00PM","07:00PM","08:00PM",
               "09:00PM","10:00PM","11:00PM","12:00PM")
 wRange <- FALSE
-wInputs <- list(wStDate=c("X"),
-                wStTime=c("X"),
-                wEndDate=c("X"),
-                wEndTime=c("X"))
-# Validation function for the loaded File option
 pwsObject <- list()
-#
+
+# The Shiny Server session function starts here
+
 shinyServer(function(input,output,session){
-#
-  print("in the header part")
+
+# Setting up the leaflet objects to control from server.r
+
   sMap <- createLeafletMap(session,"stnMap")
   wMap <- createLeafletMap(session,"weatherMap")
-#
+##
+# This Reactive block responds to the 'Get Stations' action button
+##
   buildStn <- reactive({
     if(input$getStations > 0 ){
-      print("inside loadStations")
       sMap$clearMarkers()
       sMap$clearShapes()
-#      isolate({
-        if (isolate(input$input_type) == "Local File Load") {
-          inFile <- input$fileStn
-          err <- try(pwsObject <- readRDS(inFile$datapath))
+      isolate({
+      if (isolate(input$input_type) == "Local File Load") {
+        inFile <- input$fileStn
+        err <- try(pwsObject <- readRDS(inFile$datapath))
+        validate(
+          need(class(err)[1] == "PWStations","'\nPlease select a valid file")
+        )
+        pwsObject
+      } else {
+        if (isolate(input$input_type) == "Zip Code"){
           validate(
-            need(class(err)[1] == "PWStations","'\nPlease select a valid file")
-          )
-          pwsObject
-        } else {
-          if (isolate(input$input_type) == "Zip Code"){
-            validate(
-              need((isolate(input$input_type) == "Zip Code") &
-                   (input$zipcode%in%zipcodes$zip),
-                   "'\nPlease enter a valid zip code")
-          )}
-          a <- isolate(input$zipcode)
-          b <- isolate(input$range)
-          c <- stateCd[stateCd$US.State==isolate(input$stcode),2]
-          d <- countryCd[countryCd$Country==isolate(input$country),2]
-          switch(isolate(input$input_type),
-                 "Zip Code" = c <- d <- NA,
-                 "State Code" = a <- b <- d <- NA,
-                 "Country Code" = a <- b <- c <- NA)
-          ProjectPWS::getStations(zip = a,
-                                  radius = b,
-                                  state = c,
-                                  country = d)
-        }
-#      })
+            need((isolate(input$input_type) == "Zip Code") &
+                 (input$zipcode%in%zipcodes$zip),
+                 "'\nPlease enter a valid zip code")
+        )}
+        a <- isolate(input$zipcode)
+        b <- isolate(input$range)
+        c <- stateCd[stateCd$US.State==isolate(input$stcode),2]
+        d <- countryCd[countryCd$Country==isolate(input$country),2]
+        switch(isolate(input$input_type),
+               "Zip Code" = c <- d <- NA,
+               "State Code" = a <- b <- d <- NA,
+               "Country Code" = a <- b <- c <- NA)
+
+# Calling the getStations function to get the stations data
+
+        ProjectPWS::getStations(zip = a,
+                                radius = b,
+                                state = c,
+                                country = d)
+      }
+      })
     }
   })
-#
+##
+# This Reactive block responds to the 'Get Weather' action button
+##
   buildWeather <- reactive({
     if(input$getWeather > 0 ){
-      print("inside loadWeather")
       wMap$clearMarkers()
       wMap$clearShapes()
       wRange <<- FALSE
+      isolate({
+
+# Validating the starting and ending time provided on the weather criteria
+
       validate(
         need(isolate(input$stDate) <= isolate(input$endDate),
-             message = "'\nThe end date should be greater than the start date")
+           message = "'\nThe end date should be greater than the start date"),
+        need(isolate(input$endDate) < Sys.Date(),
+           message = "'\nInput dates should be less than current date")
       )
-#
+
+# Converting the starting time and ending time to the format required by
+# loadWeatherData function
+
       a <- as.character(isolate(input$stDate))
       date1 <- paste0(substr(a,6,7),"/",substr(a,9,10),"/",substr(a,1,4))
       time1 <- which(timesRef == isolate(input$stTime)) - 1
@@ -85,37 +102,31 @@ shinyServer(function(input,output,session){
       date2 <- paste0(substr(b,6,7),"/",substr(b,9,10),"/",substr(b,1,4))
       time2 <- which(timesRef == isolate(input$endTime)) - 1
       wRange <<- TRUE
-# check if the dates were changed, only in that scenario run the API calls
-      if((wInputs$wStDate[1] == as.character(isolate(input$stDate))) &
-         (wInputs$wStTime[1] == as.character(isolate(input$stTime))) &
-         (wInputs$wEndDate[1] == as.character(isolate(input$endDate))) &
-         (wInputs$wEndTime[1] == as.character(isolate(input$endTime)))){
-        obj
-      } else {
-        wInputs$wStDate[1] <<- as.character(isolate(input$stDate))
-        wInputs$wStTime[1] <<- as.character(isolate(input$stTime))
-        wInputs$wEndDate[1] <<- as.character(isolate(input$endDate))
-        wInputs$wEndTime[1] <<- as.character(isolate(input$endTime))
-#
-        tempObj <- ProjectPWS::loadWeatherData(pwStations = obj,
-                                               startDate = date1,
-                                               startHour = time1,
-                                               endDate = date2,
-                                               endHour = time2)
+
+# Calling the loadWeatherData with the PWStations object and input criteria
+
+      tempObj <- ProjectPWS::loadWeatherData(pwStations = obj,
+                                             startDate = date1,
+                                             startHour = time1,                                               endDate = date2,
+                                             endHour = time2)
+
 # Clean-up the weather data so that inconsistent values are not shown on UI
-        tempObj$weatherData <-
+
+      tempObj$weatherData <-
                    ProjectPWS::validateTrimAndFill(pwStations = tempObj,
-                                                   stopAfterValidation = TRUE)
-        tempObj
-      }
+                                                 stopAfterValidation = TRUE)
+      tempObj
+    })
     }
   })
-#
+##
+# Everytime 'Get Stations' is clicked the below block renders the leaflet map
+# centering on the station lats and longs and placing markers on the map on
+# the 'Stations Map' tab
+##
   output$stnMap <- renderLeaflet({
     if(input$getStations > 0 ){
-      print("in station map")
       obj <<- buildStn()
-      print("came back from load stations")
       stnTable <- obj$stations
       pins <<- data.frame(lon=as.numeric(stnTable$lon),
                          lat=as.numeric(stnTable$lat),
@@ -129,21 +140,30 @@ shinyServer(function(input,output,session){
       sMap
     }
   })
-#
+##
+# Everytime 'Get Stations' is clicked the below block renders the Data table
+# on the 'Data Table' tab of the UI
+##
   output$stnTable <- renderDataTable({
     if(input$getStations > 0){
-      print("in stn table")
       obj$stations
     }
   })
-#
+##
+# Everytime 'Get Stations' is clicked the below block renders the histogram
+# on the 'Data Table' tab of the UI
+##
   output$stnPlot <- renderPlot({
     if(input$getStations > 0){
-      print("in stn plot")
+
+# Calling the R6 plot stations function that returns the histogram
       obj$plotStations()
     }
   })
-#
+##
+# This function handles the 'Save Data Locally' action button to allow the user
+# to save the PWStations object into his local computer
+##
   output$saveTable <- downloadHandler(
     filename = function() {
       switch(isolate(input$input_type),
@@ -155,45 +175,51 @@ shinyServer(function(input,output,session){
       saveRDS(obj, file = file)
     }
   )
-#
+##
+# Everytime 'Get Weather' is clicked the below block calls the reactive
+# buildWeather function defined earlier to get the weather info
+##
   output$weatherMap <- renderLeaflet({
     if(input$getWeather > 0){
-      print("in weather map")
       obj <<- buildWeather()
-      print(obj$weatherData)
-# The Weather map is rendered by the observe function down below
+# The Weather map is rendered by the observe function block down below
     }
   })
-#
+##
+# Everytime 'Get Weather' is clicked the below block shows the appropriate
+# weather attribute legend for the color codes
+##
   output$weatherLegend <- renderImage({
-      print("in weather legend")
       imageName <- switch(input$wParm,
-                          "1" = "tempLegend.png",
-                          "2" = "humidLegend.png",
-                          "3" = "windSLegend.png",
-                          "4" = "pressureLegend.png")
-      print(imageName)
-      print(isolate(input$wParm))
+                          "Temperature" = "tempLegend.png",
+                          "Humidity" = "humidLegend.png",
+                          "Wind Speed" = "windSLegend.png",
+                          "Pressure" = "pressureLegend.png")
       fileName <- normalizePath(file.path('www',imageName),
                                 winslash="\\")
-      print(fileName)
       list(src = fileName)
   }, deleteFile = FALSE)
-#
+##
+# Everytime 'Get Weather' is clicked the below block creates the drop down
+# with an entry for each hour in the time range provided by the user.
+##
   output$weatherRange <- renderUI({
     if(input$getWeather > 0){
+
+# The wRange variable stops the Select Time drop down to be displayed if there
+# was a validation error hit in the earlier buildWeather function
+
       if(!wRange) return()
-      print("in weatherRange")
+
       date1 <- as.Date(isolate(input$stDate),format="%Y-%m-%d")
       time1 <- which(timesRef == isolate(input$stTime))
       date2 <- as.Date(isolate(input$endDate),format="%Y-%m-%d")
       time2 <- which(timesRef == isolate(input$endTime))
-      print(date1)
-      print(date2)
-      print(time1)
-      print(time2)
       dateRange <- as.character(seq(from = date1, to = date2, by = 1))
       temp <- character()
+
+# Building the drop down values
+
       timeRange <- sapply(seq_along(dateRange),function(x){
         if(x == 1){
           if (length(dateRange) == 1) {
@@ -208,31 +234,49 @@ shinyServer(function(input,output,session){
             temp <<- c(temp,paste(dateRange[x],timesRef))
           }
         }
-        print(temp)
       })
       timeRange <- temp
+
+# Have to render this drop down from server.r because we cannot determine the
+# drop down values until the user provides the start and end times
+
       selectInput("attrRange",label="Select Time",timeRange)
     }
   })
+##
 # observe block for changes to the weatherRange dropdown or weather attribute
+# renders the leaflet map with the updated markings based on weatherRange and
+# weather attribute selected
+##
   wmapObs <- observe({
-    print("in observe")
+
+# We don't want this block to run if the weather range has not yet been rendered
+# that only happens when the user comes for the first time on the 'Weather Map'
+# tab and has not yet provided his search criteria and hit 'Get Weather' button
+
     if(is.null(input$attrRange)) return()
+
     wRangeVal <- input$attrRange
     wIndex <- switch(input$wParm,
-                       "1" = 3,
-                       "2" = 4,
-                       "3" = 5,
-                       "4" = 6)
+                     "Temperature" = 3,
+                     "Humidity"    = 4,
+                     "Wind Speed"  = 5,
+                     "Pressure"    = 6)
     isolate({
       tryCatch({
+
+# Clearing any previous markers/popups on the map
+
       wMap$clearMarkers()
       wMap$clearShapes()
+
       dateTime <- wRangeVal
       dateW <- substr(dateTime,start=1,stop=10)
       timeW <- substr(dateTime,start=12,stop=18)
       timeW <- which(timesRef==timeW) - 1
-#
+
+# Loading the weather data fetched in the buildWeather function above
+
       wTable <- obj$weatherData
       wPins <<- sapply(wTable,function(x){
                  a <- which(x$day == dateW & x$hour == as.character(timeW))
@@ -242,18 +286,25 @@ shinyServer(function(input,output,session){
                    x[[a,wIndex]]
                  }
       })
+
+# Choosing the corresponding weather colors data frame for color coding
+
       colors <- switch(input$wParm,
-                       "1" = tempColors,
-                       "2" = humidColors,
-                       "3" = windSColors,
-                       "4" = pressureColors)
-      print(wPins)
-      print(colors)
+                       "Temperature" = tempColors,
+                       "Humidity"    = humidColors,
+                       "Wind Speed"  = windSColors,
+                       "Pressure"    = pressureColors)
+
+# This fits the maps bounds to include all the stations
+
       wMap$fitBounds(min(pins$lat),min(pins$lon),max(pins$lat),max(pins$lon))
+
+# Now for each station the circle marker is added to the map with the right
+# color coding based on the value of the weather attribute
+
       for(i in 1:nrow(pins)){
         if(!is.na(wPins[i])){
           col <- colors[(colors$from <= wPins[i] & colors$to > wPins[i]),3]
-          print(col)
           wMap$addCircleMarker(lat = pins$lat[i], lng = pins$lon[i],
                                radius = 10,
                                layerId = pins$id[i],
@@ -267,19 +318,19 @@ shinyServer(function(input,output,session){
       )
     })
   })
-#
-# observe block to show pop-ups on weather map
+
+# observe block to show pop-ups on weather map, not working!!!
+
   wmapPopObs <- observe({
-    print("in popup observe")
     event <- input$wMap_marker_click
     if(is.null(event)) return()
     wMap$clearPopups()
     isolate({
       parm <- switch(isolate(input$wParm),
-                        "1" = "Temperature:",
-                        "2" = "Humidity:",
-                        "3" = "Wind Speed:",
-                        "4" = "Pressure:")
+                       "Temperature" = "Temperature:",
+                       "Humidity"    = "Humidity:",
+                       "Wind Speed"  = "Wind Speed:",
+                       "Pressure"    = "Pressure:")
       content <- as.character(
         tagList(
          paste("Station:",event$id),
@@ -291,3 +342,6 @@ shinyServer(function(input,output,session){
     })
   })
 })
+##
+## End 06005272 - Maruthi Ram Nadakuduru Code
+##
