@@ -102,171 +102,184 @@ loadWeatherData <- function(pwStations, startDate, endDate = NA,
   # Match weatherVars
   weatherVars <- match.arg(weatherVars, several.ok = TRUE)
 
-  # For the Wunderground API, we are limited to a call per station, per day
-  # We create a SAX handler that will parse a single day of history data for a
-  # single station. It saves the first value at each hour for that day and
-  # provides a hook to retrieve a data table.
+  if (!all(identical(startDate, pwStations$startDate),
+           identical(endDate, pwStations$endDate),
+           identical(startHour, pwStations$startHour),
+           identical(endHour, pwStations$endHour),
+           identical(weatherVars, pwStations$weatherVars))) {
+    # For the Wunderground API, we are limited to a call per station, per day
+    # We create a SAX handler that will parse a single day of history data for a
+    # single station. It saves the first value at each hour for that day and
+    # provides a hook to retrieve a data table.
 
-  # SAX Handler that will deal with each observation
+    # SAX Handler that will deal with each observation
 
-  # Variables to indicate if we are processing the first/last days (special)
-  observationHandler = function(day) {
-    tableHours <- numeric()
-    tableVars <- list()
-    tableConds <- list()
+    # Variables to indicate if we are processing the first/last days (special)
+    observationHandler = function(day) {
+      tableHours <- numeric()
+      tableVars <- list()
+      tableConds <- list()
 
-    # Create an empty vector for each var we are saving
-    lapply(weatherVars, function(var) tableVars[[var]] <- numeric())
+      # Create an empty vector for each var we are saving
+      lapply(weatherVars, function(var) tableVars[[var]] <- numeric())
 
-    # Keep the first observation for each hour, also check if we skip an hour
-    nextHour <- 0
+      # Keep the first observation for each hour, also check if we skip an hour
+      nextHour <- 0
 
-    observation <- function(context, node, attrs, ...) {
-      hour <- as.numeric(XML::xmlValue(node[["date"]][["hour"]]))
+      observation <- function(context, node, attrs, ...) {
+        hour <- as.numeric(XML::xmlValue(node[["date"]][["hour"]]))
 
-      if (hour >= nextHour) {
-        if (hour > nextHour) {
-          # This means we skipped an hour/s
-          # Create a sequence of missing hours
-          hoursMissing <- seq(nextHour, hour - 1)
+        if (hour >= nextHour) {
+          if (hour > nextHour) {
+            # This means we skipped an hour/s
+            # Create a sequence of missing hours
+            hoursMissing <- seq(nextHour, hour - 1)
 
-          # Fill these in
-          tableHours <<- c(tableHours, hoursMissing)
+            # Fill these in
+            tableHours <<- c(tableHours, hoursMissing)
 
-          # Add NA values for each missing datapoint
-          lapply(weatherVars,
-                 function(var) {
-                   tableVars[[var]] <<- c(tableVars[[var]],
-                                          rep(NA, length(hoursMissing)))}
-          )
+            # Add NA values for each missing datapoint
+            lapply(weatherVars,
+                   function(var) {
+                     tableVars[[var]] <<- c(tableVars[[var]],
+                                            rep(NA, length(hoursMissing)))}
+            )
 
-          tableConds <<- c(tableConds, rep(NA, length(hoursMissing)))
-        }
-
-        # We are at the first point of the next hour
-        nextHour <<- hour + 1
-        lapply(weatherVars, function(var) {
-          varToAdd <- NA
-          # Does this value exist in this observation?
-          if (var %in% names(node)) {
-            varToAdd <- as.numeric(XML::xmlValue(node[[var]]))
+            tableConds <<- c(tableConds, rep(NA, length(hoursMissing)))
           }
-          tableVars[[var]] <<- c(tableVars[[var]], varToAdd)
-        })
 
-        condsToAdd <- NA
-        if ("conds" %in% names(node)) {
-          condsToAdd <- XML::xmlValue(node[["conds"]])
-        }
-
-        tableConds <<- c(tableConds, condsToAdd)
-        tableHours <<- c(tableHours, hour)
-      }
-    }
-
-    getWeatherDT <- function() {
-      if (length(tableHours) > 0) {
-        if (length(tableHours) < 24) {
-          # Looks like we missed some data at the end
-          missingHours <- seq(max(tableHours) + 1, 23)
-          tableHours <<- c(tableHours, missingHours)
-          tableConds <<- c(tableConds, rep(NA, length(missingHours)))
-          lapply(weatherVars,
-                 function(var) {
-                   tableVars[[var]] <<- c(tableVars[[var]],
-                                          rep(NA, length(missingHours)))
+          # We are at the first point of the next hour
+          nextHour <<- hour + 1
+          lapply(weatherVars, function(var) {
+            varToAdd <- NA
+            # Does this value exist in this observation?
+            if (var %in% names(node)) {
+              varToAdd <- as.numeric(XML::xmlValue(node[[var]]))
+            }
+            tableVars[[var]] <<- c(tableVars[[var]], varToAdd)
           })
+
+          condsToAdd <- NA
+          if ("conds" %in% names(node)) {
+            condsToAdd <- XML::xmlValue(node[["conds"]])
+          }
+
+          tableConds <<- c(tableConds, condsToAdd)
+          tableHours <<- c(tableHours, hour)
         }
-        weatherDT <- data.table::data.table(day = day,
-                                            hour = tableHours)
-        weatherDT <- cbind(weatherDT,
-                           data.table::data.table(as.data.frame(tableVars)))
-        weatherDT$conds <- tableConds
-
-        setNames(weatherDT, c("day", "hour", weatherVars, "conds"))
-      } else {
-        data.table::data.table()
       }
+
+      getWeatherDT <- function() {
+        if (length(tableHours) > 0) {
+          if (length(tableHours) < 24) {
+            # Looks like we missed some data at the end
+            missingHours <- seq(max(tableHours) + 1, 23)
+            tableHours <<- c(tableHours, missingHours)
+            tableConds <<- c(tableConds, rep(NA, length(missingHours)))
+            lapply(weatherVars,
+                   function(var) {
+                     tableVars[[var]] <<- c(tableVars[[var]],
+                                            rep(NA, length(missingHours)))
+            })
+          }
+          weatherDT <- data.table::data.table(day = day,
+                                              hour = tableHours)
+          weatherDT <- cbind(weatherDT,
+                             data.table::data.table(as.data.frame(tableVars)))
+          weatherDT$conds <- tableConds
+
+          setNames(weatherDT, c("day", "hour", weatherVars, "conds"))
+        } else {
+          data.table::data.table()
+        }
+      }
+
+      errorHandler <- function(context, node, attrs, ...) {
+       if ("type" %in% names(node) && "description" %in% names(node)) {
+         stop("Error from Wunderground API. Type: %s, Description: %s",
+              XML::xmlValue(node[["type"]]),
+              XML::xmlValue(node[["description"]]))
+       }
+      }
+
+      c(observation = XML::xmlParserContextFunction(observation),
+        error = XML::xmlParserContextFunction(errorHandler),
+        getWeatherDT = getWeatherDT)
     }
 
-    errorHandler <- function(context, node, attrs, ...) {
-     if ("type" %in% names(node) && "description" %in% names(node)) {
-       stop("Error from Wunderground API. Type: %s, Description: %s",
-            XML::xmlValue(node[["type"]]),
-            XML::xmlValue(node[["description"]]))
-     }
+    getDayHistory <- function(stationId, day, firstDay, lastDay) {
+      apiKey <- Sys.getenv("WUNDERGROUND_API_KEY")
+      if (is.na(apiKey) || apiKey == "") {
+        stop(paste0("A WUnderground API key must be specified as the environment",
+                    "variable 'WUNDERGROUND_API_KEY'."))
+      }
+
+      baseurl <- "http://api.wunderground.com/api/"
+      historyUrl <- paste0(baseurl,
+                           apiKey,
+                           "/history_",
+                           format(day, "%Y%m%d"),
+                           "/q/PWS:",
+                           stationId,
+                           ".xml")
+
+      # Generate a table for a single day
+      obsHandler <- observationHandler(day)
+      XML::xmlEventParse(file = historyUrl,
+                         handlers = NULL,
+                         branches = obsHandler,
+                         isURL = TRUE)
+
+      wDT <- obsHandler$getWeatherDT()
+      if (firstDay) {
+        # Just keep values after the first hour
+        wDT <- wDT[wDT$hour >= startHour, ]
+      } else if (lastDay) {
+        wDT <- wDT[wDT$hour <= endHour, ]
+      }
+
+      wDT
     }
 
-    c(observation = XML::xmlParserContextFunction(observation),
-      error = XML::xmlParserContextFunction(errorHandler),
-      getWeatherDT = getWeatherDT)
+    # This call is essentially for each station id, for each day, get the weather
+    # data then combine into a single data table for each station and into a list
+    # of data tables, one for each station.
+    # print(sprintf("There are %d stations to query over %d days.
+    # This may take a while.", length(stationIds), length(days)))
+    stationCount <- 1
+    stationsTotal <- length(stationIds)
+    allStations <- lapply(stationIds, function(station) {
+      print(sprintf("Processing station %d of %d...", stationCount,
+                    stationsTotal))
+      stationCount <<- stationCount + 1
+      dayCount <- 1
+      daysTotal <- length(days)
+      stationDays <- lapply(days,
+                            function(day) {
+                              print(sprintf("Processing day %d of %d...",
+                                            dayCount,
+                                            daysTotal))
+                              dHist <- getDayHistory(
+                                station,
+                                day,
+                                firstDay = (dayCount == 1),
+                                lastDay = (dayCount == daysTotal))
+                              dayCount <<- dayCount + 1
+                              dHist
+                            })
+      data.table::rbindlist(stationDays)
+    })
+    names(allStations) <- stationIds
+
+    pwStations$weatherData <- allStations
+
+    # Set state of query
+    pwStations$startDate <- startDate
+    pwStations$endDate <- endDate
+    pwStations$startHour <- startHour
+    pwStations$endHour <- endHour
+    pwStations$weatherVars <- weatherVars
   }
-
-  getDayHistory <- function(stationId, day, firstDay, lastDay) {
-    apiKey <- Sys.getenv("WUNDERGROUND_API_KEY")
-    if (is.na(apiKey) || apiKey == "") {
-      stop(paste0("A WUnderground API key must be specified as the environment",
-                  "variable 'WUNDERGROUND_API_KEY'."))
-    }
-
-    baseurl <- "http://api.wunderground.com/api/"
-    historyUrl <- paste0(baseurl,
-                         apiKey,
-                         "/history_",
-                         format(day, "%Y%m%d"),
-                         "/q/PWS:",
-                         stationId,
-                         ".xml")
-
-    # Generate a table for a single day
-    obsHandler <- observationHandler(day)
-    XML::xmlEventParse(file = historyUrl,
-                       handlers = NULL,
-                       branches = obsHandler,
-                       isURL = TRUE)
-
-    wDT <- obsHandler$getWeatherDT()
-    if (firstDay) {
-      # Just keep values after the first hour
-      wDT <- wDT[wDT$hour >= startHour, ]
-    } else if (lastDay) {
-      wDT <- wDT[wDT$hour <= endHour, ]
-    }
-
-    wDT
-  }
-
-  # This call is essentially for each station id, for each day, get the weather
-  # data then combine into a single data table for each station and into a list
-  # of data tables, one for each station.
-  # print(sprintf("There are %d stations to query over %d days.
-  # This may take a while.", length(stationIds), length(days)))
-  stationCount <- 1
-  stationsTotal <- length(stationIds)
-  allStations <- lapply(stationIds, function(station) {
-    print(sprintf("Processing station %d of %d...", stationCount,
-                  stationsTotal))
-    stationCount <<- stationCount + 1
-    dayCount <- 1
-    daysTotal <- length(days)
-    stationDays <- lapply(days,
-                          function(day) {
-                            print(sprintf("Processing day %d of %d...",
-                                          dayCount,
-                                          daysTotal))
-                            dHist <- getDayHistory(
-                              station,
-                              day,
-                              firstDay = (dayCount == 1),
-                              lastDay = (dayCount == daysTotal))
-                            dayCount <<- dayCount + 1
-                            dHist
-                          })
-    data.table::rbindlist(stationDays)
-  })
-  names(allStations) <- stationIds
-
-  pwStations$weatherData <- allStations
 
   pwStations
 }
