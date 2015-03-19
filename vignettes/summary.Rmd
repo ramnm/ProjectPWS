@@ -343,8 +343,11 @@ sum(is.na(filled[[1]]))
 ## Testing
 testthat is used to run automated tests on each of the functions (outside of 
 shiny). It does some basic tests of invalid input as well as the core 
-functionality described here. We limit testing because of the number of calls 
-that generally have to be made and would have to invest in a more rigorous 
-testing scheme if we were to continue here i.e. improve the design so that we 
-could shim the API and run many more tests locally etc.
+functionality described here. To test live queries, we have included a function
+that does a basic query of the Wunderground API. If the query fails (due to 
+connectivity or an invalid key) then the live query tests are skipped.
+We also limit testing because of the number of calls that generally have to be 
+made and would have to invest in a more rigorous testing scheme if we were to 
+continue here i.e. improve the design so that we could shim the API and run many 
+more tests locally etc.
 
