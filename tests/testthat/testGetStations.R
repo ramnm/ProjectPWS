@@ -40,9 +40,41 @@ test_that("invalid input results in error", {
 
 # Testing some of the functions requires LOTS of calls, only do a
 # basic test here.
-latLongStations <- getStations(latlong = c(35.229, -80.8433),
-                               radius = 10)
+
+# Skip if we don't have a valid key or can't connect
+checkApiConnection <- function() {
+  error <- FALSE
+  result = tryCatch({
+    apiKey <- Sys.getenv("WUNDERGROUND_API_KEY")
+    testurl <-
+      sprintf("http://api.wunderground.com/api/%s/geolookup/q/98107.xml",
+              apiKey)
+    pwsXML <- XML::xmlTreeParse(testurl, useInternalNodes = TRUE)
+    pwsRoot <- XML::xmlRoot(pwsXML)
+    pwsNamespace <- XML::getDefaultNamespace(pwsRoot)
+
+    # Check for errors
+    errorNodes <- XML::getNodeSet(pwsRoot,
+                                  "/response/error",
+                                  pwsNamespace)
+
+    if (length(errorNodes) > 0) {
+      error <- TRUE
+    }
+  }, error = function(e) {
+    error <<- TRUE
+  })
+
+  if (error) {
+    skip("Unable to query API due to connection or invalid API Key")
+  }
+}
+
 test_that("stations are queried correctly", {
+  checkApiConnection()
+  latLongStations <- getStations(latlong = c(35.229, -80.8433),
+                                 radius = 10)
+
   expect_true(nrow(latLongStations$stations) > 1)
   expect_true("Charlotte" %in% latLongStations$stations$city)
   expect_true(max(latLongStations$stations$distance_mi) <= 10)
