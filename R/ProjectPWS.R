@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 #' ProjectPWS
 #'
 #' @name ProjectPWS
@@ -10,3 +13,6 @@
 #' example(validateTrimAndFill)
 #'
 NULL
+##
+##  End jcasale code
+##

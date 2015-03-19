@@ -44,6 +44,12 @@
 #' cityStations <- getStations(state = "OR", city = "Portand", radius = 3)
 #' countryStations <- getStations(country = "Spain")
 #' }
+##
+##  End jcasale code
+##
+##
+##  Begin nmram code
+##
 getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
                         city = NA, radius = NA) {
   # Create a PWStations object to return.
@@ -77,7 +83,6 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
     pwsXML <- XML::xmlTreeParse(finalurl, useInternalNodes = TRUE)
     pwsRoot <- XML::xmlRoot(pwsXML)
     pwsNamespace <- XML::getDefaultNamespace(pwsRoot)
-
     # Check for errors
     errorNodes <- XML::getNodeSet(pwsRoot,
                                   "/response/error",
@@ -118,7 +123,12 @@ getStations <- function(latlong = NA, zip = NA, state = NA, country = NA,
            lon = as.numeric(xmlList$lon),
            distance_mi = as.numeric(xmlList$distance_mi))
     })
-
+##
+##  End nmram code
+##
+##
+##  Begin jcasale code
+##
     data.table::rbindlist(stationList)
   }
 

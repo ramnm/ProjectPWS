@@ -1,5 +1,5 @@
 ##
-##  Begin jcasale code
+##  Begin nmram code
 ##
 #' PWS Storage
 #' @docType class
@@ -31,6 +31,12 @@ PWStations <- R6::R6Class("PWStations",
     startHour = NA,
     endHour = NA,
     weatherVars = NA,
+##
+##  End nmram code
+##
+##
+##  Begin jcasale code
+##
     initialize = function(latlong = NA, zip = NA, state = NA,
                           country = NA, city = NA, radius = NA) {
       if (all(is.na(latlong),
@@ -131,6 +137,12 @@ PWStations <- R6::R6Class("PWStations",
       self$radius <- radius
       self$queryArg <- queryArg
     },
+##
+##  End jcasale code
+##
+##
+##  Begin nmram code
+##
     plotStations = function () {
       stn <- self$stations
       hist(stn$distance_mi,
@@ -142,5 +154,5 @@ PWStations <- R6::R6Class("PWStations",
   )
 )
 ##
-##  End jcasale code
+##  End nmram code
 ##

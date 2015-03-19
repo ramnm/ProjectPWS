@@ -2,7 +2,7 @@
 ##  Begin jcasale code
 ##
 #' Clean and fill PWS weather data
-#' @author Maruthi Ram Nadakuduru, Jared Casale
+#' @author Jared Casale
 #' @description Takes a PWStation object and loops through all of its
 #'              stored weather data. For each weather data table, it will:
 #' \itemize{

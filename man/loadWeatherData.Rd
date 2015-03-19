@@ -64,6 +64,6 @@ nrow(stations$weatherData[[1]])
 }
 }
 \author{
-Maruthi Ram Nadakuduru, Jared Casale
+Jared Casale
 }
 

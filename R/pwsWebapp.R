@@ -2,7 +2,7 @@
 ##  Begin jcasale code
 ##
 #' Launch PWS Shiny app
-#' @author Maruthi Ram Nadakuduru, Jared Casale
+#' @author Jared Casale
 #' @description This is a test hook to start the shiny app
 #' @export
 pwsWebapp <- function() {

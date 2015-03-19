@@ -1,5 +1,5 @@
 ##
-## Begin 06005272 - Maruthi Ram Nadakuduru Code
+## Begin nmram Code
 ##
 ## Credits
 ## -------
@@ -171,5 +171,5 @@ shinyUI(
   )
 )
 ##
-## End 06005272 - Maruthi Ram Nadakuduru Code
+## End nmram Code
 ##

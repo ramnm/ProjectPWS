@@ -67,7 +67,7 @@ specificTable <- makeStationSubtable(charlotteStations,
 specificTable$stations
 }
 \author{
-Maruthi Ram Nadakuduru, Jared Casale
+Jared Casale
 }
 \seealso{
 \code{\link{getStations}} for a method that will generate an object.

@@ -1,5 +1,5 @@
 ##
-## Begin 06005272 - Maruthi Ram Nadakuduru Code
+## Begin nmram Code
 ##
 library(leaflet)
 
@@ -343,5 +343,5 @@ shinyServer(function(input,output,session){
   })
 })
 ##
-## End 06005272 - Maruthi Ram Nadakuduru Code
+## End nmram Code
 ##

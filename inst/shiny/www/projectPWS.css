@@ -1,4 +1,5 @@
-/* This CSS file has been reused from the Shiny SuperZip example
+/* Begin nmram code
+   This CSS file has been reused from the Shiny SuperZip example
    provided on the Shiny RStudio Gallery site. Here is a link to the website
    http://shiny.rstudio.com/gallery/superzip-example.html
 */
@@ -46,3 +47,4 @@ h1, h2, h3, h4 { font-weight: 400; }
 .leaflet-container {
   background-color: white !important;
 }
+/* End nmram code */

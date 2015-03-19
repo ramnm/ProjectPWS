@@ -1,3 +1,6 @@
+##
+##  Begin jcasale code
+##
 #' Charlotte Personal Weather Stations.
 #'
 #' This is a PWS object of stations near Charlotte, NC with loaded
@@ -21,3 +24,6 @@
 #' as a percentage, pressure in inches of mercury, wind speed in miles per
 #' hour and plain-text description of conditions), respectively.
 "charlotteStations"
+##
+##  End jcasale code
+##

@@ -2,7 +2,7 @@
 ##  Begin jcasale code
 ##
 #' Load PWS Weather Data
-#' @author Maruthi Ram Nadakuduru, Jared Casale
+#' @author Jared Casale
 #' @description This function will query the wunderground site and retrieve the
 #'              weather data for each PW Station, over the specified time
 #'              period.

@@ -10,6 +10,6 @@ pwsWebapp()
 This is a test hook to start the shiny app
 }
 \author{
-Maruthi Ram Nadakuduru, Jared Casale
+Jared Casale
 }
 

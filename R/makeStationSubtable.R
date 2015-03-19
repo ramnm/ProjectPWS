@@ -2,7 +2,7 @@
 ##  Begin jcasale code
 ##
 #' Create subtable of PWS
-#' @author Maruthi Ram Nadakuduru, Jared Casale
+#' @author Jared Casale
 #' @description Returns a PWStations object with the specified filter applied
 #'              to the original PWStations. If the original object contained
 #'              weather data, this will also be filtered to the appropriate

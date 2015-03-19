@@ -52,6 +52,6 @@ filled <- validateTrimAndFill(charlotteStations)
 sum(is.na(filled[[1]]))
 }
 \author{
-Maruthi Ram Nadakuduru, Jared Casale
+Jared Casale
 }
 
